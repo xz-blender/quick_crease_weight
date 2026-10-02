@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1 — 2026-10-02
+
+- Moved mouse and keyboard hints into a separate vertical floating list to the right of the value HUD.
+- Kept the list visible throughout adjustment, with an independent visibility toggle in preferences.
+- Fit both panels together within the viewport, including cursor placement and large font settings.
+
 ## 1.1.0 — 2026-10-02
 
 - Redesigned the HUD with anti-aliased rounded cards, selection badges, a pill progress bar, and grouped key hints.

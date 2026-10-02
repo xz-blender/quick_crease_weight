@@ -219,7 +219,7 @@ def finish():
         "success": True, "blender": bpy.app.version_string,
         "hud_draws": draw_count, "preference_draws": pref_draw_count,
         "checks": ["Shift+E vertex crease", "Ctrl+Shift+E edge bevel weight", "cancel restore",
-                   "confirm and undo", "custom shortcut", "HUD styles", "preferences layout",
+                   "confirm and undo", "custom shortcut", "separate right-hand hints", "preferences layout",
                    "large font and corner radius", "square corners", "zero and full progress"],
     }, ensure_ascii=False, indent=2), encoding="utf-8")
     bpy.ops.wm.quit_blender()

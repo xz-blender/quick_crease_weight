@@ -9,9 +9,13 @@ from gpu_extras.batch import batch_for_shader
 
 from .preferences import get_preferences
 
-HINT_ROWS = (
-    (("Shift", "吸附 0.1"), ("Ctrl", "设为 1"), ("Alt", "设为 0")),
-    (("LMB / Enter", "确认"), ("RMB / Esc", "取消")),
+HINTS = (
+    ("Mouse", "左右拖动"),
+    ("Shift", "吸附 0.1"),
+    ("Ctrl", "设为 1"),
+    ("Alt", "设为 0"),
+    ("LMB / Enter", "确认"),
+    ("RMB / Esc", "取消"),
 )
 
 
@@ -67,10 +71,6 @@ def text_at(text, x, y, size, color):
     blf.draw(0, text)
 
 
-def hint_width(key, label, size, scale):
-    return text_width(key, size) + text_width(label, size) + 23 * scale
-
-
 def card_layout(operator, prefs, scale):
     size = prefs.hud_font_size * scale
     small = max(12.0, min(15.0, prefs.hud_font_size * 0.34)) * scale
@@ -79,33 +79,60 @@ def card_layout(operator, prefs, scale):
     badge = f"{domain}  ·  {operator._edit.count}"
     pad = 20 * scale
     widths = [text_width(operator.display_name, title_size) + text_width(badge, small) + 62 * scale,
-              text_width("1.00", size) + text_width("左右拖动", small) + 35 * scale]
-    if prefs.hud_show_help:
-        widths.extend(sum(hint_width(key, label, small, scale) for key, label in row)
-                      + (len(row) - 1) * 14 * scale for row in HINT_ROWS)
+              text_width("1.00", size)]
     width = max(300 * scale, max(widths) + 2 * pad)
     header = 24 * scale
     value_row = size + 20 * scale
     bar_row = 20 * scale if prefs.hud_show_bar else 0
-    footer = 82 * scale if prefs.hud_show_help else 0
-    return {"width": width, "height": 2 * pad + header + value_row + bar_row + footer,
+    return {"width": width, "height": 2 * pad + header + value_row + bar_row,
             "scale": scale, "size": size, "small": small, "title_size": title_size,
             "pad": pad, "header": header, "value_row": value_row, "badge": badge}
 
 
-def draw_hints(shader, x, top, width, size, scale, color):
-    for row in HINT_ROWS:
-        total = sum(hint_width(key, label, size, scale) for key, label in row)
-        gap = (width - total) / max(1, len(row) - 1)
-        cursor = x
-        for key, label in row:
-            key_width = text_width(key, size) + 16 * scale
-            rounded_rect(shader, cursor, top - 25 * scale, key_width, 25 * scale, 5 * scale,
-                         tint(color, 0.075))
-            text_at(key, cursor + 8 * scale, top - 18 * scale, size, tint(color, 0.95))
-            text_at(label, cursor + key_width + 7 * scale, top - 18 * scale, size, tint(color, 0.66))
-            cursor += hint_width(key, label, size, scale) + gap
-        top -= 34 * scale
+def overlay_layout(operator, prefs, scale):
+    """Measure both independent panels so the right-hand list stays on screen."""
+    card = card_layout(operator, prefs, scale)
+    help_layout = None
+    gap = 14 * scale if prefs.hud_show_help else 0
+    if prefs.hud_show_help:
+        size = card["small"]
+        pad, row_height, row_gap = 14 * scale, 24 * scale, 5 * scale
+        key_width = max(text_width(key, size) for key, _ in HINTS) + 16 * scale
+        label_width = max(text_width(label, size) for _, label in HINTS)
+        help_layout = {"width": 2 * pad + key_width + 12 * scale + label_width,
+                       "height": 2 * pad + len(HINTS) * row_height + (len(HINTS) - 1) * row_gap,
+                       "pad": pad, "key_width": key_width, "row_height": row_height, "row_gap": row_gap}
+    return {"card": card, "help": help_layout, "gap": gap, "scale": scale,
+            "width": card["width"] + gap + (help_layout["width"] if help_layout else 0),
+            "height": max(card["height"], help_layout["height"] if help_layout else 0)}
+
+
+def draw_panel(shader, x, y, width, height, prefs, scale, color):
+    if not prefs.hud_background:
+        return
+    radius = prefs.hud_corner_radius * scale
+    background = tuple(prefs.hud_background_color)
+    if prefs.hud_panel_shadow:
+        for spread, opacity in ((7, 0.045), (4, 0.07), (1, 0.12)):
+            edge = spread * scale
+            rounded_rect(shader, x - edge, y - edge - 3 * scale,
+                         width + 2 * edge, height + 2 * edge, radius + edge,
+                         (0.0, 0.0, 0.0, opacity * background[3]))
+    rounded_rect(shader, x, y, width, height, radius, background)
+    rounded_rect(shader, x + radius, y + height - scale, max(0, width - 2 * radius),
+                 scale, scale / 2, tint(color, 0.1 * background[3]))
+
+
+def draw_hints(shader, x, y, layout, size, scale, color):
+    left = x + layout["pad"]
+    top = y + layout["height"] - layout["pad"]
+    key_width = layout["key_width"]
+    for key, label in HINTS:
+        rounded_rect(shader, left, top - layout["row_height"], key_width,
+                     layout["row_height"], 5 * scale, tint(color, 0.075))
+        text_at(key, left + 8 * scale, top - 17 * scale, size, tint(color, 0.95))
+        text_at(label, left + key_width + 12 * scale, top - 17 * scale, size, tint(color, 0.72))
+        top -= layout["row_height"] + layout["row_gap"]
 
 
 def viewport_bounds(area, region):
@@ -142,15 +169,16 @@ def draw(operator):
     region = context.region
     view_x, view_y, view_width, view_height = viewport_bounds(context.area, region)
     ui_scale = context.preferences.system.ui_scale
-    layout = card_layout(operator, prefs, ui_scale)
+    group = overlay_layout(operator, prefs, ui_scale)
     margin = min(8 * ui_scale, view_width / 8, view_height / 8)
-    fit = min(1.0, (view_width - 2 * margin) / layout["width"],
-              (view_height - 2 * margin) / layout["height"])
+    fit = min(1.0, (view_width - 2 * margin) / group["width"],
+              (view_height - 2 * margin) / group["height"])
     if fit <= 0:
         return
     if fit < 1:
-        layout = card_layout(operator, prefs, ui_scale * fit)
-    width, height, scale = layout["width"], layout["height"], layout["scale"]
+        group = overlay_layout(operator, prefs, ui_scale * fit)
+    layout = group["card"]
+    width, height, scale = group["width"], group["height"], group["scale"]
     pad, small, size = layout["pad"], layout["small"], layout["size"]
     offset_x, offset_y = prefs.hud_offset_x * ui_scale, prefs.hud_offset_y * ui_scale
     if prefs.hud_anchor == "CURSOR":
@@ -160,24 +188,19 @@ def draw(operator):
         y = view_y + view_height - height - offset_y if prefs.hud_anchor == "TOP" else view_y + offset_y
     x = max(view_x + margin, min(x, view_x + view_width - width - margin))
     y = max(view_y + margin, min(y, view_y + view_height - height - margin))
-    radius = prefs.hud_corner_radius * scale
+    help_x = x + layout["width"] + group["gap"]
+    help_y = y + (height - group["help"]["height"]) / 2 if group["help"] else y
+    y += (height - layout["height"]) / 2
+    width, height = layout["width"], layout["height"]
     color, accent = tuple(prefs.hud_text_color), tuple(prefs.hud_value_color)
     blend = gpu.state.blend_get()
     try:
         gpu.state.blend_set("ALPHA")
         shader = gpu.shader.from_builtin("SMOOTH_COLOR")
-        if prefs.hud_background:
-            background = tuple(prefs.hud_background_color)
-            if prefs.hud_panel_shadow:
-                for spread, opacity in ((7, 0.045), (4, 0.07), (1, 0.12)):
-                    edge = spread * scale
-                    rounded_rect(shader, x - edge, y - edge - 3 * scale,
-                                 width + 2 * edge, height + 2 * edge, radius + edge,
-                                 (0.0, 0.0, 0.0, opacity * background[3]))
-            rounded_rect(shader, x, y, width, height, radius, background)
-            # Subtle top highlight without a second translucent card compositing over the first.
-            rounded_rect(shader, x + radius, y + height - scale, max(0, width - 2 * radius),
-                         scale, scale / 2, tint(color, 0.1 * background[3]))
+        draw_panel(shader, x, y, width, height, prefs, scale, color)
+        if group["help"]:
+            draw_panel(shader, help_x, help_y, group["help"]["width"], group["help"]["height"],
+                       prefs, scale, color)
         if prefs.hud_shadow:
             blf.enable(0, blf.SHADOW)
             blf.shadow(0, 3, 0.0, 0.0, 0.0, 0.6)
@@ -197,18 +220,14 @@ def draw(operator):
         top -= layout["header"]
         baseline = top - size - 6 * scale
         text_at(f"{operator.value:.2f}", left, baseline, size, accent)
-        drag = "左右拖动"
-        text_at(drag, right - text_width(drag, small), baseline + 3 * scale, small, tint(color, 0.5))
         top -= layout["value_row"]
         if prefs.hud_show_bar:
             bar_y, bar_height = top - 6 * scale, 6 * scale
             rounded_rect(shader, left, bar_y, right - left, bar_height, bar_height / 2, tint(color, 0.1))
             rounded_rect(shader, left, bar_y, (right - left) * operator.value,
                          bar_height, bar_height / 2, accent)
-            top -= 20 * scale
-        if prefs.hud_show_help:
-            rounded_rect(shader, left, top - scale, right - left, scale, 0, tint(color, 0.075))
-            draw_hints(shader, left, top - 14 * scale, right - left, small, scale, color)
+        if group["help"]:
+            draw_hints(shader, help_x, help_y, group["help"], small, scale, color)
     finally:
         blf.disable(0, blf.SHADOW)
         gpu.state.blend_set(blend)

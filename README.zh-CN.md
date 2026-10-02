@@ -7,15 +7,15 @@
 在 Blender 网格编辑模式中，根据点 / 边选择模式自动选择属性，拖动鼠标即可调整。
 
 [![Blender](https://img.shields.io/badge/Blender-4.2%2B-E87D0D?style=flat-square&logo=blender&logoColor=white)](#兼容性)
-[![Version](https://img.shields.io/badge/version-1.1.0-38BDF8?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.1-38BDF8?style=flat-square)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-GPL--2.0--or--later-7C83FD?style=flat-square)](LICENSE)
 [![Dependencies](https://img.shields.io/badge/dependencies-none-34D399?style=flat-square)](#功能一览)
 
-**[下载插件 ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.1.0.zip)** · [快速开始](#快速开始) · [自定义设置](#自定义设置) · [English](README.md)
+**[下载插件 ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.1.1.zip)** · [快速开始](#快速开始) · [自定义设置](#自定义设置) · [English](README.md)
 
 <img src="docs/images/crease-hud.png" alt="Blender 顶点编辑模式中，蓝色 HUD 显示折痕值 0.65" width="100%">
 
-<sub>实际 Blender 4.5.4 视口截图：顶点折痕、实时数值和操作提示。</sub>
+<sub>实际 Blender 4.5.4 视口截图：左侧数值 HUD，右侧独立悬浮按键列表。</sub>
 
 </div>
 
@@ -25,7 +25,7 @@
 | --- | --- |
 | **自动识别点 / 边** | 点模式调整顶点属性，边和面模式调整边属性，无需切换工具。 |
 | **折痕 + 倒角权重** | 默认 <kbd>Shift</kbd> + <kbd>E</kbd> 和 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd>。 |
-| **实时 HUD** | 圆角卡片、醒目数值、选择标签、胶囊进度条和分组按键提示。 |
+| **实时 HUD** | 圆角数值卡片、选择标签与胶囊进度条；按键提示独立放在右侧，操作期间持续显示。 |
 | **快捷键与外观可定制** | 原生键位编辑器，配合位置、字号、颜色和背景透明度设置。 |
 | **可取消、可撤销** | 取消恢复每个元素的原值；确认后使用 Blender 撤销。 |
 | **多物体编辑** | 同时调整多个编辑中的网格，共享网格只处理一次。 |
@@ -67,7 +67,9 @@
 | 操作手感 | 鼠标灵敏度 |
 | HUD 布局 | 底部居中、顶部居中、跟随鼠标，水平 / 垂直偏移 |
 | HUD 外观 | 字号、文字颜色、数值颜色、背景颜色与透明度、圆角半径、卡片阴影、文字阴影 |
-| 信息显示 | HUD 总开关、操作提示、数值进度条 |
+| 信息显示 | HUD 总开关、右侧按键列表、数值进度条 |
+
+鼠标和键盘操作提示全部放在 HUD 右侧的独立悬浮列表中，不占用数值卡片。两块面板共用外观设置、一起定位，并在窄视口中自动缩放。可在偏好设置中关闭 **显示右侧按键列表**。
 
 <p align="center">
   <img src="docs/images/bevel-hud.png" alt="橙色大字号 HUD 位于视口顶部，显示边倒角权重 0.70" width="100%">
@@ -136,7 +138,7 @@ $blender = 'C:\path\to\blender.exe'
 & $blender --factory-startup --command extension validate
 New-Item -ItemType Directory -Path dist -Force | Out-Null
 & $blender --factory-startup --command extension build --output-dir dist
-& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.1.0.zip
+& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.1.1.zip
 ```
 
 界面测试：

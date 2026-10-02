@@ -38,7 +38,7 @@ class QCW_Preferences(bpy.types.AddonPreferences):
     hud_background_color: FloatVectorProperty(name="背景颜色与透明度", subtype="COLOR", size=4,
                                              default=(0.022, 0.029, 0.043, 0.94), min=0.0, max=1.0)
     hud_shadow: BoolProperty(name="文字阴影", default=False)
-    hud_show_help: BoolProperty(name="显示操作提示", default=True)
+    hud_show_help: BoolProperty(name="显示右侧按键列表", description="工具操作期间，在数值 HUD 右侧持续显示独立的悬浮操作列表", default=True)
     hud_show_bar: BoolProperty(name="显示数值进度条", default=True)
 
     def draw(self, context):
