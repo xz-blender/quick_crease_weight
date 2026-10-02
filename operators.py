@@ -1,10 +1,11 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 import bpy
 from bpy.props import FloatProperty
 
 from . import hud
 from .mesh_data import WeightEdit
 from .preferences import get_preferences
+from .translation import rpt, tr
 
 ACTIVE = []
 MODIFIER_KEYS = {
@@ -34,7 +35,7 @@ class WeightOperator:
 
     def invoke(self, context, event):
         if context.region is None or context.region.type != "WINDOW":
-            self.report({"WARNING"}, "请在 3D 视口内调用")
+            self.report({"WARNING"}, rpt("Run this tool in a 3D viewport"))
             return {"CANCELLED"}
         if ACTIVE:
             return {"CANCELLED"}
@@ -60,14 +61,16 @@ class WeightOperator:
             self._handle = bpy.types.SpaceView3D.draw_handler_add(hud.draw, (self,), "WINDOW", "POST_PIXEL")
             context.window_manager.modal_handler_add(self)
             ACTIVE.append(self)
-            self._workspace.status_text_set(
-                f"{self.display_name} | 左键/Enter 确认 | 右键/Esc 还原 | Shift 吸附 0.1 | Ctrl=1 | Alt=0"
-            )
+            self._workspace.status_text_set(lambda header, context: self._draw_status(header, context))
             self._area.tag_redraw()
         except Exception:
             self._cleanup()
             raise
         return {"RUNNING_MODAL"}
+
+    def _draw_status(self, header, context):
+        text = tr("{tool} | LMB/Enter: confirm | RMB/Esc: restore | Shift: snap 0.1 | Ctrl=1 | Alt=0")
+        header.layout.label(text=text.format(tool=tr(self.display_name)), translate=False)
 
     def _cleanup(self):
         if getattr(self, "_closed", True):
@@ -171,22 +174,22 @@ class WeightOperator:
 
 class QCW_OT_crease(WeightOperator, bpy.types.Operator):
     bl_idname = "mesh.quick_crease"
-    bl_label = "快速折痕"
-    bl_description = "按网格选择模式调整顶点或边折痕"
+    bl_label = "Quick Crease"
+    bl_description = "Adjust vertex or edge creases based on the mesh selection mode"
     bl_options = {"REGISTER", "UNDO", "BLOCKING"}
     attribute_kind = "crease"
-    display_name = "折痕"
-    value: FloatProperty(name="折痕", default=0.0, min=0.0, max=1.0)
+    display_name = "Crease"
+    value: FloatProperty(name="Crease", default=0.0, min=0.0, max=1.0)
 
 
 class QCW_OT_bevel_weight(WeightOperator, bpy.types.Operator):
     bl_idname = "mesh.quick_bevel_weight"
-    bl_label = "快速倒角权重"
-    bl_description = "按网格选择模式调整顶点或边倒角权重"
+    bl_label = "Quick Bevel Weight"
+    bl_description = "Adjust vertex or edge bevel weights based on the mesh selection mode"
     bl_options = {"REGISTER", "UNDO", "BLOCKING"}
     attribute_kind = "bevel_weight"
-    display_name = "倒角权重"
-    value: FloatProperty(name="倒角权重", default=0.0, min=0.0, max=1.0)
+    display_name = "Bevel Weight"
+    value: FloatProperty(name="Bevel Weight", default=0.0, min=0.0, max=1.0)
 
 
 CLASSES = (QCW_OT_crease, QCW_OT_bevel_weight)

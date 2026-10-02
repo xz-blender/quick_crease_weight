@@ -119,7 +119,7 @@ def counted_measure(*a, **kw):
 hud.batch_for_shader = counted_batch
 hud.text_width = counted_measure
 operator = SimpleNamespace(_area=area, _region=region, _edit=SimpleNamespace(domain="POINT", count=8),
-                           _mouse_region=(300, 300), attribute_kind="crease", display_name="折痕", value=0.5)
+                           _mouse_region=(300, 300), attribute_kind="crease", display_name="Crease", value=0.5)
 scenarios = iter(("idle", "value_changes", "cursor_moves"))
 scenario = None
 samples = []

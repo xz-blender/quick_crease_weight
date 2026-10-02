@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 """Cached viewport cards with feathered rounded edges and measured text."""
 from math import cos, pi, sin
 
@@ -8,14 +8,15 @@ import gpu
 from gpu_extras.batch import batch_for_shader
 
 from .preferences import get_preferences
+from .translation import tr
 
 HINTS = (
-    ("Mouse", "左右拖动"),
-    ("Shift", "吸附 0.1"),
-    ("Ctrl", "设为 1"),
-    ("Alt", "设为 0"),
-    ("LMB / Enter", "确认"),
-    ("RMB / Esc", "取消"),
+    ("Mouse", "Drag left/right"),
+    ("Shift", "Snap 0.1"),
+    ("Ctrl", "Set to 1"),
+    ("Alt", "Set to 0"),
+    ("LMB / Enter", "Confirm"),
+    ("RMB / Esc", "Cancel"),
 )
 
 
@@ -89,10 +90,11 @@ def card_layout(operator, prefs, scale):
     size = prefs.hud_font_size * scale
     small = max(12.0, min(15.0, prefs.hud_font_size * 0.34)) * scale
     title_size = 14 * scale
-    domain = "顶点" if operator._edit.domain == "POINT" else "边"
+    title = tr(operator.display_name)
+    domain = tr("Vertices") if operator._edit.domain == "POINT" else tr("Edges")
     badge = f"{domain}  ·  {operator._edit.count}"
     pad = 20 * scale
-    widths = [text_width(operator.display_name, title_size) + text_width(badge, small) + 62 * scale,
+    widths = [text_width(title, title_size) + text_width(badge, small) + 62 * scale,
               text_width("1.00", size)]
     width = max(300 * scale, max(widths) + 2 * pad)
     header = 24 * scale
@@ -100,7 +102,7 @@ def card_layout(operator, prefs, scale):
     bar_row = 20 * scale if prefs.hud_show_bar else 0
     return {"width": width, "height": 2 * pad + header + value_row + bar_row,
             "scale": scale, "size": size, "small": small, "title_size": title_size,
-            "pad": pad, "header": header, "value_row": value_row, "badge": badge}
+            "pad": pad, "header": header, "value_row": value_row, "badge": badge, "title": title}
 
 
 def overlay_layout(operator, prefs, scale):
@@ -109,13 +111,15 @@ def overlay_layout(operator, prefs, scale):
     help_layout = None
     gap = 14 * scale if prefs.hud_show_help else 0
     if prefs.hud_show_help:
+        hints = tuple((tr(key) if key == "Mouse" else key, tr(label)) for key, label in HINTS)
         size = card["small"]
         pad, row_height, row_gap = 14 * scale, 24 * scale, 5 * scale
-        key_width = max(text_width(key, size) for key, _ in HINTS) + 16 * scale
-        label_width = max(text_width(label, size) for _, label in HINTS)
+        key_width = max(text_width(key, size) for key, _ in hints) + 16 * scale
+        label_width = max(text_width(label, size) for _, label in hints)
         help_layout = {"width": 2 * pad + key_width + 12 * scale + label_width,
                        "height": 2 * pad + len(HINTS) * row_height + (len(HINTS) - 1) * row_gap,
-                       "pad": pad, "key_width": key_width, "row_height": row_height, "row_gap": row_gap}
+                       "pad": pad, "key_width": key_width, "row_height": row_height, "row_gap": row_gap,
+                       "hints": hints}
     return {"card": card, "help": help_layout, "gap": gap, "scale": scale,
             "width": card["width"] + gap + (help_layout["width"] if help_layout else 0),
             "height": max(card["height"], help_layout["height"] if help_layout else 0)}
@@ -141,7 +145,7 @@ def build_hints(shapes, texts, x, y, layout, size, scale, color):
     left = x + layout["pad"]
     top = y + layout["height"] - layout["pad"]
     key_width = layout["key_width"]
-    for key, label in HINTS:
+    for key, label in layout["hints"]:
         rounded_rect(shapes, left, top - layout["row_height"], key_width,
                      layout["row_height"], 5 * scale, tint(color, 0.075))
         texts.append((key, left + 8 * scale, top - 17 * scale, size, tint(color, 0.95)))
@@ -204,7 +208,7 @@ class HudRenderer:
         left, right = pad, width - pad
         top = y + height - pad
         rounded_rect(shapes, left, top - 16 * scale, 6 * scale, 6 * scale, 3 * scale, accent)
-        self.texts.append((operator.display_name, left + 14 * scale, top - 18 * scale,
+        self.texts.append((layout["title"], left + 14 * scale, top - 18 * scale,
                            layout["title_size"], color))
         badge_width = text_width(layout["badge"], small) + 18 * scale
         rounded_rect(shapes, right - badge_width, top - 24 * scale, badge_width, 24 * scale,
@@ -229,7 +233,8 @@ class HudRenderer:
         ui_scale = context.preferences.system.ui_scale
         color = tuple(prefs.hud_text_color)
         accent = tuple(prefs.hud_crease_color if operator.attribute_kind == "crease" else prefs.hud_bevel_color)
-        signature = (view_width, view_height, ui_scale, operator.display_name, operator._edit.domain,
+        signature = (bpy.app.translations.locale, context.preferences.view.use_translate_interface,
+                     view_width, view_height, ui_scale, operator.display_name, operator._edit.domain,
                      operator._edit.count, prefs.hud_font_size, prefs.hud_corner_radius,
                      prefs.hud_show_help, prefs.hud_show_bar, prefs.hud_background,
                      prefs.hud_panel_shadow, tuple(prefs.hud_background_color), color, accent)

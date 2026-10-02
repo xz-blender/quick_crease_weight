@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.1 — 2026-10-02
+
+- Prepared the Blender Extensions submission under GPL-3.0-or-later, using the existing GPL-2.0-or-later grant; included the GPL version 3 license text and author copyright metadata.
+- Added English and Simplified Chinese UI translations that follow Blender's language and its interface, tooltip, and report translation switches.
+- Refresh HUD text, measured layout, and status hints when the language changes during an operation; added real-window translation checks.
+- Documented the default Shift + E shortcut overlap, automatic interface translation, and the absence of network access or external dependencies.
+- Excluded browser automation artifacts from extension builds. Mesh editing behavior is unchanged from 1.2.0.
+
 ## Documentation & media — 2026-10-02
 
 - Redesigned the icon around editable mesh vertices and attribute edges: orange crease and blue bevel weight; refreshed both icon sizes and the media ZIP.

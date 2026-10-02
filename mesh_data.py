@@ -1,8 +1,10 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 """A reversible edit over a snapshot of the selected mesh elements."""
 from dataclasses import dataclass
 
 import bmesh
+
+from .translation import rpt
 
 
 def selection_domain(select_mode):
@@ -12,7 +14,7 @@ def selection_domain(select_mode):
 
 def attribute_name(kind, domain):
     if kind not in {"crease", "bevel_weight"} or domain not in {"POINT", "EDGE"}:
-        raise ValueError("不支持的属性或网格域")
+        raise ValueError(rpt("Unsupported attribute or mesh domain"))
     return f"{kind}_{'vert' if domain == 'POINT' else 'edge'}"
 
 
@@ -56,12 +58,13 @@ class WeightEdit:
                 continue
             attribute = mesh.attributes.get(self.name)
             if attribute and (attribute.domain != self.domain or attribute.data_type != "FLOAT"):
-                raise ValueError(f"{obj.name}: {self.name} 已存在，但不是正确域的浮点属性")
+                raise ValueError(rpt("{object}: {attribute} already exists but is not a float attribute on the correct domain")
+                                 .format(object=obj.name, attribute=self.name))
             # Creating the first custom-data layer can invalidate BMVert/BMEdge
             # wrappers. Keep stable indices; this modal tool never edits topology.
             self.snapshots.append(MeshSnapshot(mesh, bm, indices, values, layer is not None))
         if not self.snapshots:
-            raise ValueError("请先选择顶点或边")
+            raise ValueError(rpt("Select vertices or edges first"))
         self.count = sum(len(snapshot.indices) for snapshot in self.snapshots)
         self.initial_value = sum(sum(snapshot.originals) for snapshot in self.snapshots) / self.count
 
@@ -82,7 +85,7 @@ class WeightEdit:
 
     def apply(self, value):
         if not self.valid():
-            raise RuntimeError("网格已离开编辑模式")
+            raise RuntimeError(rpt("The mesh has left Edit Mode"))
         value = max(0.0, min(1.0, value))
         if value == self._last_value:
             return False

@@ -1,6 +1,7 @@
 """Run in factory-startup Blender; does not save or alter user preferences."""
 import importlib
 from pathlib import Path
+from string import Formatter
 import sys
 from types import SimpleNamespace
 import unittest
@@ -14,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT.parent))
 addon = importlib.import_module(ROOT.name)
 addon_utils.enable(ROOT.name, default_set=True)
-from quick_crease_weight import keymaps, operators, preferences
+from quick_crease_weight import keymaps, operators, preferences, translation
 from quick_crease_weight.mesh_data import WeightEdit
 
 
@@ -129,15 +130,38 @@ class IntegrationTests(unittest.TestCase):
         edit.apply(1)
         self.assertEqual(self.values("crease_vert"), [0, 1, 1, 1])
         bpy.ops.mesh.select_all(action="DESELECT")
-        with self.assertRaisesRegex(ValueError, "请先选择"):
+        with self.assertRaisesRegex(ValueError, translation.rpt("Select vertices or edges first")):
             WeightEdit(bpy.context, "crease")
 
     def test_wrong_attribute_type_does_not_mutate(self):
         self.bm.verts.layers.int.new("crease_vert")
         bmesh.update_edit_mesh(self.obj.data)
-        with self.assertRaisesRegex(ValueError, "浮点属性"):
+        message = translation.rpt("{object}: {attribute} already exists but is not a float attribute on the correct domain")
+        with self.assertRaises(ValueError) as raised:
             WeightEdit(bpy.context, "crease")
+        self.assertEqual(str(raised.exception), message.format(object=self.obj.name, attribute="crease_vert"))
         self.assertIsNone(self.bm.verts.layers.float.get("crease_vert"))
+
+    def test_translation_catalog_preserves_placeholders_and_rna_labels(self):
+        formatter = Formatter()
+        for source, target in translation.ZH_CN.items():
+            with self.subTest(source=source):
+                fields = lambda text: {field for _, field, _, _ in formatter.parse(text) if field is not None}
+                self.assertEqual(fields(source), fields(target))
+        self.assertEqual(translation.TRANSLATIONS["zh_CN"], translation.TRANSLATIONS["zh_HANS"])
+        for prop in preferences.QCW_Preferences.bl_rna.properties:
+            if prop.identifier in {"rna_type", "bl_idname"}:
+                continue
+            self.assertIn(prop.name, translation.ZH_CN)
+            if prop.description:
+                self.assertIn(prop.description, translation.ZH_CN)
+            if prop.type == "ENUM":
+                for item in prop.enum_items:
+                    self.assertIn(item.name, translation.ZH_CN)
+                    self.assertIn(item.description, translation.ZH_CN)
+        for cls in operators.CLASSES:
+            self.assertIn(("Operator", cls.bl_label), translation.TRANSLATIONS["zh_HANS"])
+            self.assertIn(cls.bl_description, translation.ZH_CN)
 
     def test_multi_object_and_shared_data(self):
         bpy.ops.object.mode_set(mode="OBJECT")
@@ -191,7 +215,7 @@ class IntegrationTests(unittest.TestCase):
         # synthetic operators into Blender's real window event queue.
         class Harness(operators.WeightOperator):
             attribute_kind = kind
-            display_name = "测试"
+            display_name = "Crease"
 
         op = Harness()
         op._edit = WeightEdit(bpy.context, kind)

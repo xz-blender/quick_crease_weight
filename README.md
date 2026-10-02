@@ -9,10 +9,10 @@
 Automatically target vertices or edges in Mesh Edit Mode, then drag to adjust.
 
 [![Blender](https://img.shields.io/badge/Blender-4.2%2B-E87D0D?style=flat-square&logo=blender&logoColor=white)](#compatibility)
-[![Version](https://img.shields.io/badge/version-1.2.0-38BDF8?style=flat-square)](CHANGELOG.md)
-[![License](https://img.shields.io/badge/license-GPL--2.0--or--later-7C83FD?style=flat-square)](LICENSE)
+[![Version](https://img.shields.io/badge/version-1.2.1-38BDF8?style=flat-square)](CHANGELOG.md)
+[![License](https://img.shields.io/badge/license-GPL--3.0--or--later-7C83FD?style=flat-square)](LICENSE)
 
-**[Download the add-on ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.0.zip)** · [Quick start](#quick-start) · [Customization](#customization) · [简体中文](README.zh-CN.md)
+**[Download the add-on ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.1.zip)** · [Quick start](#quick-start) · [Customization](#customization) · [简体中文](README.zh-CN.md)
 
 <img src="docs/media/cover.jpg" alt="Quick Crease Weight — orange creases and blue bevel weights" width="100%">
 
@@ -30,13 +30,14 @@ Automatically target vertices or edges in Mesh Edit Mode, then drag to adjust.
 - **Reversible:** cancel restores individual values; confirmed operations support Blender undo.
 - **Multi-object editing:** shared mesh data is processed once.
 - **Efficient updates:** cached HUD geometry and layout, plus mesh writes only when the applied value changes.
+- **English and Simplified Chinese:** automatically follows Blender's interface language, including the live HUD and status bar.
 - **Standalone:** no third-party Python packages required.
 
 ## See it in action
 
 <img src="docs/media/demo.gif" alt="Blender demo: adjust vertex crease with Shift E, edge bevel weight with Ctrl Shift E, then use Ctrl and Alt to set 1 and 0" width="100%">
 
-Recorded in **Blender 4.5.4** with the actual add-on. Subdivision Surface and Bevel modifiers visualize the weights; the HUD is currently in Chinese. [Watch or download the MP4](docs/media/demo.mp4).
+Recorded in **Blender 4.5.4** with the actual add-on. Subdivision Surface and Bevel modifiers visualize the weights; this recording shows the Chinese HUD. [Watch or download the MP4](docs/media/demo.mp4).
 
 ## Quick start
 
@@ -60,6 +61,10 @@ Recorded in **Blender 4.5.4** with the actual add-on. Subdivision Surface and Be
 
 Release invocation modifiers before pressing them again to use adjustment controls. The initial value is the selection average. Once adjusted, all selected elements receive the same value. Invoking and confirming without adjustment preserves original values.
 
+**Shortcut overlap:** the default **Shift + E** binding takes precedence over Blender's built-in crease shortcut in Mesh Edit Mode. Change or disable the add-on binding in its preferences if you prefer the built-in operation. Disabling this add-on removes its keymap entries.
+
+**Interface language:** the HUD, tool labels, preferences, status bar, and warnings follow Blender's language in **Preferences → Interface → Translation**. English and Simplified Chinese are supported, including Blender's **Automatic** system-language setting. Changes apply without re-enabling the add-on. Interface, tooltip, and report translations respect Blender's separate switches; untranslated text falls back to English. The add-on works offline, collects no telemetry, and requires no accounts, other add-ons, or third-party packages.
+
 ## Customization
 
 Open **Preferences → Add-ons → Quick Crease Weight**.
@@ -72,7 +77,7 @@ Open **Preferences → Add-ons → Quick Crease Weight**.
 | HUD appearance | Font size, text color, separate crease/bevel theme colors, background opacity, corner radius, card shadow, text shadow |
 | Visibility | HUD, right-hand shortcut list, progress bar |
 
-Mouse and keyboard hints live entirely in the right-hand list. Both panels share the selected styling and move together; the layout scales down to fit narrow viewports. Disable **显示右侧按键列表** in preferences to hide the list.
+Mouse and keyboard hints live entirely in the right-hand list. Both panels share the selected styling and move together; the layout scales down to fit narrow viewports. Disable **Show Right-hand Shortcut List** in preferences to hide the list.
 
 <img src="docs/images/bevel-hud.png" alt="Blue bevel-weight HUD showing 0.70 with a separate shortcut list on its right" width="100%">
 
@@ -118,9 +123,10 @@ Declared minimum: **Blender 4.2**. Local verification results:
 
 | Version | Integration tests | Window interaction checks |
 | --- | --- | --- |
-| 4.3.2 | 13 passed | Narrow viewport, rounded HUD, shortcuts, cancel and undo passed |
-| 4.5.4 LTS | 13 passed | Shortcuts, remapping, cancel, undo, rounded HUD and preferences passed |
-| 5.3.0 Alpha, local build | 13 passed | — |
+| 4.3.2 | 14 passed | 12 translation scenarios passed, including live switching and narrow HUD layout |
+| 4.5.4 LTS | 14 passed | 12 translation scenarios passed; shortcuts, remapping, cancel, undo, HUD and preferences passed |
+| 5.2.0 LTS Beta, local build | 14 passed | 12 translation scenarios passed, including live switching and narrow HUD layout |
+| 5.3.0 Alpha, local build | 13 passed before the translation update | — |
 | 4.2 | Not locally tested | Not locally tested |
 
 These results do not imply testing on every operating system or Blender build.
@@ -136,16 +142,17 @@ $blender = 'C:\path\to\blender.exe'
 & $blender --factory-startup --command extension validate
 New-Item -ItemType Directory -Path dist -Force | Out-Null
 & $blender --factory-startup --command extension build --output-dir dist
-& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.2.0.zip
+& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.2.1.zip
 ```
 
 For real window checks:
 
 ```powershell
 & $blender --factory-startup --enable-event-simulate --python tests/blender_ui_smoke.py
+& $blender --factory-startup --enable-event-simulate -p 60 60 900 900 --python tests/blender_translation.py
 ```
 
-The UI script uses a factory-startup test window, does not save user preferences, and closes the window when finished. Results are written to `tests/artifacts/`.
+The UI scripts use factory-startup test windows, do not save user preferences, and close the windows when finished. Results are written to `tests/artifacts/`. The translation checks cover live language changes, independent translation switches, localized errors, registration cycles, and measured HUD bounds.
 
 </details>
 
@@ -155,4 +162,4 @@ Icons, cover art, and the recorded demo are available in the [media kit](docs/me
 
 **Author:** WXZ.
 
-Licensed under **GPL-2.0-or-later**: GNU GPL version 2 or, at your option, any later version. The version 2 text is included in [LICENSE](LICENSE).
+Licensed under **GPL-3.0-or-later**: GNU GPL version 3 or, at your option, any later version. The version 3 text is included in [LICENSE](LICENSE).

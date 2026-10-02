@@ -1,11 +1,11 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-License-Identifier: GPL-3.0-or-later
 import bpy
 import rna_keymap_ui
 
 KEYMAPS = []
 BINDINGS = (
-    ("mesh.quick_crease", "折痕", False),
-    ("mesh.quick_bevel_weight", "倒角权重", True),
+    ("mesh.quick_crease", "Crease", False),
+    ("mesh.quick_bevel_weight", "Bevel Weight", True),
 )
 
 
@@ -42,4 +42,4 @@ def draw(layout, context):
                 box.context_pointer_set("keymap", keymap)
                 rna_keymap_ui.draw_kmi([], config, keymap, item, box, 0)
         else:
-            box.label(text="快捷键将在 Blender 更新键位配置后显示", icon="INFO")
+            box.label(text="Shortcuts will appear after Blender updates its key configuration", icon="INFO")

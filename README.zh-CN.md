@@ -9,11 +9,11 @@
 在 Blender 网格编辑模式中，根据点 / 边选择模式自动选择属性，拖动鼠标即可调整。
 
 [![Blender](https://img.shields.io/badge/Blender-4.2%2B-E87D0D?style=flat-square&logo=blender&logoColor=white)](#兼容性)
-[![Version](https://img.shields.io/badge/version-1.2.0-38BDF8?style=flat-square)](CHANGELOG.md)
-[![License](https://img.shields.io/badge/license-GPL--2.0--or--later-7C83FD?style=flat-square)](LICENSE)
+[![Version](https://img.shields.io/badge/version-1.2.1-38BDF8?style=flat-square)](CHANGELOG.md)
+[![License](https://img.shields.io/badge/license-GPL--3.0--or--later-7C83FD?style=flat-square)](LICENSE)
 [![Dependencies](https://img.shields.io/badge/dependencies-none-34D399?style=flat-square)](#功能一览)
 
-**[下载插件 ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.0.zip)** · [快速开始](#快速开始) · [自定义设置](#自定义设置) · [English](README.md)
+**[下载插件 ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.1.zip)** · [快速开始](#快速开始) · [自定义设置](#自定义设置) · [English](README.md)
 
 <img src="docs/media/cover.jpg" alt="Quick Crease Weight 封面：橙色折痕、蓝色倒角权重" width="100%">
 
@@ -33,6 +33,7 @@
 | **可取消、可撤销** | 取消恢复每个元素的原值；确认后使用 Blender 撤销。 |
 | **多物体编辑** | 同时调整多个编辑中的网格，共享网格只处理一次。 |
 | **高效更新** | 缓存 HUD 图形与布局，仅在应用值变化时重写网格。 |
+| **中英文自动切换** | 随 Blender 界面语言显示英文或简体中文，HUD 和状态栏同步更新。 |
 | **独立运行** | 无第三方 Python 依赖，安装后即可使用。 |
 
 ## 操作演示
@@ -66,6 +67,8 @@
 调用后先松开快捷键中的修饰键，再重新按下以使用上述控制，避免启动倒角权重工具时意外将数值设为 1。
 
 初始显示值是所选元素的**平均值**；开始拖动后，所选元素会被设置为同一个值。仅调用后直接确认不会改写原值。
+
+**界面语言：**在 Blender **偏好设置 → 界面 → 翻译** 中选择英文或简体中文，插件的 HUD、工具名称、偏好设置、状态栏和警告会自动跟随，也支持“自动”使用系统语言。切换后无需重新启用插件。界面、工具提示和报告分别遵循 Blender 对应的翻译开关；未提供译文的文本回退英文。
 
 ## 自定义设置
 
@@ -141,9 +144,10 @@
 
 | 版本 | 集成检查 | 窗口交互检查 |
 | --- | --- | --- |
-| 4.3.2 | 13 项通过 | 窄视口、圆角 HUD、快捷键、取消与撤销通过 |
-| 4.5.4 LTS | 13 项通过 | 快捷键、改键、取消、撤销、圆角 HUD、偏好设置通过 |
-| 5.3.0 Alpha 本机构建 | 13 项通过 | — |
+| 4.3.2 | 14 项通过 | 12 项翻译场景通过，包括操作中切换语言及窄视口布局 |
+| 4.5.4 LTS | 14 项通过 | 12 项翻译场景通过；快捷键、改键、取消、撤销、HUD、偏好设置通过 |
+| 5.2.0 LTS Beta 本机构建 | 14 项通过 | 12 项翻译场景通过，包括操作中切换语言及窄视口布局 |
+| 5.3.0 Alpha 本机构建 | 翻译更新前 13 项通过 | — |
 | 4.2 | 尚未实测 | 尚未实测 |
 
 <details>
@@ -161,30 +165,34 @@ $blender = 'C:\path\to\blender.exe'
 & $blender --factory-startup --command extension validate
 New-Item -ItemType Directory -Path dist -Force | Out-Null
 & $blender --factory-startup --command extension build --output-dir dist
-& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.2.0.zip
+& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.2.1.zip
 ```
 
 界面测试：
 
 ```powershell
 & $blender --factory-startup --enable-event-simulate --python tests/blender_ui_smoke.py
+& $blender --factory-startup --enable-event-simulate -p 60 60 900 900 --python tests/blender_translation.py
 ```
 
-界面测试在工厂设置窗口中运行，不保存用户偏好设置，结束后自动关闭。结果位于 `tests/artifacts/`。
+界面测试在工厂设置窗口中运行，不保存用户偏好设置，结束后自动关闭。结果位于 `tests/artifacts/`。翻译测试覆盖操作中切换语言、独立翻译开关、错误提示、重新启用以及 HUD 文字边界。
 
 | 文件 | 职责 |
 | --- | --- |
 | `mesh_data.py` | 选择快照、属性写入与取消还原 |
 | `operators.py` | 交互操作、确认与清理 |
 | `hud.py` | 视口绘制 |
+| `translation.py` | 中英文词典、原生翻译注册与动态文本入口 |
 | `preferences.py` / `keymaps.py` | 偏好设置与键位注册 |
 
 </details>
 
 ## 作者与许可
 
+默认 **Shift + E** 会在网格编辑模式中优先调用本扩展，与 Blender 内置折痕快捷键重叠。可在扩展偏好设置中改键或禁用该绑定；停用扩展会移除其快捷键。界面支持跟随 Blender 自动切换英文和简体中文。扩展离线运行，不收集遥测，不需要账号、其他扩展或第三方依赖。
+
 图标、封面和演示文件已整理为 [媒体素材包](docs/media/README.md)，包含后续向 Blender 官方扩展平台提交时可使用的导出文件。
 
 作者：**WXZ**。
 
-采用 **GPL-2.0-or-later**：可按 GNU GPL 第 2 版或任何后续版本使用、修改和分发。完整第 2 版文本见 [LICENSE](LICENSE)。
+采用 **GPL-3.0-or-later**：可按 GNU GPL 第 3 版或任何后续版本使用、修改和分发。完整第 3 版文本见 [LICENSE](LICENSE)。
