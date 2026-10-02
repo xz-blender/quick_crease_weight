@@ -1,0 +1,132 @@
+<div align="center">
+
+# Quick Crease Weight
+
+**Two shortcuts for creases and bevel weights in Blender.**
+
+Automatically target vertices or edges in Mesh Edit Mode, then drag to adjust.
+
+[![Blender](https://img.shields.io/badge/Blender-4.2%2B-E87D0D?style=flat-square&logo=blender&logoColor=white)](#compatibility)
+[![Version](https://img.shields.io/badge/version-1.0.0-38BDF8?style=flat-square)](CHANGELOG.md)
+[![License](https://img.shields.io/badge/license-GPL--2.0--or--later-7C83FD?style=flat-square)](LICENSE)
+
+**[Download the add-on ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.0.0.zip)** · [Quick start](#quick-start) · [Customization](#customization) · [简体中文](README.md)
+
+<img src="docs/images/crease-hud.png" alt="Vertex Edit Mode with crease value 0.65" width="100%">
+
+<sub>Actual Blender 4.5.4 capture. The current add-on interface is in Chinese.</sub>
+
+</div>
+
+## Features
+
+- **Selection-aware:** vertex mode targets vertex attributes; edge and face modes target edges.
+- **Two tools:** Shift + E for creases, Ctrl + Shift + E for bevel weights.
+- **Live HUD:** attribute, selection count, value, progress bar, and controls in the viewport.
+- **Customizable:** native Blender shortcut editing, mouse sensitivity, and HUD styling.
+- **Reversible:** cancel restores individual values; confirmed operations support Blender undo.
+- **Multi-object editing:** shared mesh data is processed once.
+- **Standalone:** no third-party Python packages or original pie-menu add-on required.
+
+## Quick start
+
+1. Download the **add-on ZIP** linked above.
+2. In **Edit → Preferences → Add-ons**, choose **Install from Disk** from the menu, select the ZIP, and enable **Quick Crease Weight**.
+3. Enter Mesh Edit Mode and select vertices or edges. Invoke a tool, move the mouse horizontally, and left-click to confirm.
+
+> [!TIP]
+> Use the validated add-on ZIP, which excludes documentation images and tests. **Code → Download ZIP** downloads the development source tree.
+
+| Input | Action |
+| --- | --- |
+| <kbd>Shift</kbd> + <kbd>E</kbd> | Adjust crease |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd> | Adjust bevel weight |
+| Move mouse horizontally | Adjust within **0–1** |
+| Hold <kbd>Shift</kbd> | Snap in **0.1** increments |
+| Press <kbd>Ctrl</kbd> / <kbd>Alt</kbd> | Set to **1** / **0** |
+| Left-click / <kbd>Enter</kbd> | Confirm |
+| Right-click / <kbd>Esc</kbd> | Cancel and restore |
+| Middle mouse / scroll wheel | Orbit / zoom |
+
+Release invocation modifiers before pressing them again to use adjustment controls. The initial value is the selection average. Once adjusted, all selected elements receive the same value. Invoking and confirming without adjustment preserves original values.
+
+## Customization
+
+Open **Preferences → Add-ons → Quick Crease Weight**.
+
+| Setting | Options |
+| --- | --- |
+| Shortcuts | Key, modifiers, enabled state |
+| Interaction | Mouse sensitivity |
+| HUD layout | Bottom, top, or cursor; horizontal and vertical offsets |
+| HUD appearance | Font size, text/value colors, background color and opacity, text shadow |
+| Visibility | HUD, help text, progress bar |
+
+<img src="docs/images/bevel-hud.png" alt="Custom orange HUD at the top of the viewport showing edge bevel weight 0.70" width="100%">
+
+<details>
+<summary><strong>View the preferences interface</strong></summary>
+
+<img src="docs/images/preferences.png" alt="Native keymap editor and HUD appearance controls" width="100%">
+
+Actual preferences layout in an isolated test window. The crease shortcut has been changed to **Shift + Q** to demonstrate customization; the default remains **Shift + E**.
+
+</details>
+
+Settings persist with Blender preferences. Save manually if Auto-Save Preferences is disabled.
+
+## Behavior and troubleshooting
+
+| Selection mode | Crease attribute | Bevel-weight attribute |
+| --- | --- | --- |
+| Vertex | `crease_vert` | `bevel_weight_vert` |
+| Edge / Face | `crease_edge` | `bevel_weight_edge` |
+
+Vertex mode takes priority in mixed selection modes. Only visible, selected elements are affected. Cancel also removes attribute layers created by the current operation.
+
+- **No visible bevel?** Add a Bevel modifier, choose the Weight limit method, and select the appropriate vertex/edge affect mode. Creases are typically viewed with a Subdivision Surface modifier.
+- **Shortcut conflict with wxz_pie_menus?** Disable its two `pie.shift_e` bindings or assign different shortcuts here. This add-on does not change the original add-on's settings.
+- **Mixed starting values?** Cancel restores each element's original value, including across multiple meshes.
+
+## Compatibility
+
+Declared minimum: **Blender 4.2**. Local verification results:
+
+| Version | Integration tests | Window interaction checks |
+| --- | --- | --- |
+| 4.3.2 | 10 passed | — |
+| 4.5.4 LTS | 10 passed | Shortcuts, remapping, cancel, undo, HUD, preferences passed |
+| 5.3.0 Alpha, local build | 10 passed | — |
+| 4.2 | Not locally tested | Not locally tested |
+
+These results do not imply testing on every operating system or Blender build.
+
+<details>
+<summary><strong>Development and packaging</strong></summary>
+
+Run from the project directory in PowerShell:
+
+```powershell
+$blender = 'C:\path\to\blender.exe'
+& $blender --background --factory-startup --python-exit-code 1 --python tests/blender_integration.py
+& $blender --factory-startup --command extension validate
+New-Item -ItemType Directory -Path dist -Force | Out-Null
+& $blender --factory-startup --command extension build --output-dir dist
+& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.0.0.zip
+```
+
+For real window checks:
+
+```powershell
+& $blender --factory-startup --enable-event-simulate --python tests/blender_ui_smoke.py
+```
+
+The UI script uses a factory-startup test window, does not save user preferences, and closes the window when finished. Results are written to `tests/artifacts/`.
+
+</details>
+
+## Credits and license
+
+Extracted and refactored from `pie/E_pie.py` in [xz-blender/wxz_pie_menus](https://github.com/xz-blender/wxz_pie_menus). Original feature author: **WXZ**.
+
+Licensed under **GPL-2.0-or-later**: GNU GPL version 2 or, at your option, any later version. The version 2 text is included in [LICENSE](LICENSE).
