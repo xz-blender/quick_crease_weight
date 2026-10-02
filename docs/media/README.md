@@ -6,7 +6,7 @@
 
 Orange represents **crease**, blue represents **bevel weight**. These files are prepared for the repository and a future Blender Extensions listing.
 
-The icon pairs an orange sharp corner with a blue rounded corner in one compact symbol. Its broad shapes remain legible at small listing sizes.
+The icon shows one connected mesh patch with visible vertices. The orange shared edge represents crease, and the blue outer edge represents bevel weight. Both highlights describe mesh attributes on selected elements.
 
 ## Files
 

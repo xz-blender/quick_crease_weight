@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/media/icon.png" alt="Quick Crease Weight — 橙色锐角与蓝色圆角图标" width="88" height="88">
+<img src="docs/media/icon.png" alt="Quick Crease Weight — 网格顶点、橙色折痕边与蓝色倒角权重边" width="88" height="88">
 
 # Quick Crease Weight
 

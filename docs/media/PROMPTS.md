@@ -1,18 +1,28 @@
 # Image generation prompts
 
-Created with the built-in `image_gen` tool. Orange crease / blue bevel matches the add-on defaults. The current icon uses complementary sharp and rounded corners. The cover was generated separately using the earlier cube motif as its reference.
+Created with the built-in `image_gen` tool. Orange crease / blue bevel matches the add-on defaults. The current icon depicts mesh vertices and selected attribute edges. The cover was generated separately using the earlier cube motif as its reference.
 
 ## Icon
 
 ```text
 Use case: logo-brand.
-Asset type: final small application icon for Quick Crease Weight, a Blender mesh editing add-on.
-Primary request: Completely redesign the icon as a beautiful, extremely simple flat geometric brand mark, suitable for a professional design tool. One single icon, centered on a square canvas.
-Symbol design: two complementary thick corner shapes form one compact, balanced geometric emblem. The upper-left orange corner is distinctly sharp, angular, a precise 90-degree folded edge. The lower-right sky-blue corner has a generous smoothly rounded bend, communicating a bevel. Together the two continuous broad ribbons suggest an open squared loop / stylized mesh corner, with clean deliberate negative-space gaps and a dark open center. Make it feel like a purposeful custom logomark, not separate clipart. Precise optical alignment, even weight, beautifully proportioned curves and corners. The silhouette must read immediately at 32 pixels. No additional lines or nodes.
-Composition: mark occupies roughly 62 percent of the canvas, centered with generous equal padding. Place it on a perfectly flat deep charcoal #151B24 rounded-square tile with radius about 21 percent of the tile width; tile occupies 92 percent of the canvas. Real transparent alpha outside the rounded tile.
-Palette: vivid warm orange #FF872D for the sharp crease form, clear sky blue #37B8F4 for the rounded bevel form, charcoal background. Use flat solid colors, crisp antialiased edges. Elegant restrained contemporary software identity.
-Avoid: isometric cubes, wireframe cubes, vertex dots, spheres, 3D extrusion, glossy materials, bevel embossing, gradients, glow, cast shadows, textures, hairline strokes, letters, text, badges, Blender logos, watermarks, multiple icon variations, presentation boards. Do not imitate any existing brand.
-Output: one finished square icon, high resolution, genuine transparency around the dark rounded-square tile.
+Asset type: finished square application icon for Quick Crease Weight, a Blender Mesh Edit Mode add-on.
+Functional meaning: the tool assigns crease or bevel-weight attributes to selected mesh vertices or edges, with orange meaning crease and blue meaning bevel weight. The icon must communicate EDITABLE MESH, SELECTED EDGES and VERTEX DATA. It must not imply two abstract corners, an unrelated logo, or a command that directly rounds geometry.
+Design: one beautifully composed, simple polygon mesh patch with two quadrilateral faces meeting along a shared straight vertical-ish fold edge. Six mesh vertices total, like a minimal folded sheet viewed obliquely, NOT a cube. Two subdued slate-gray flat faces make the surface legible. The common central crease edge is a strong warm orange stroke. One outer edge on the right face is a strong clear blue stroke indicating bevel weight on that edge. All remaining topology is restrained light gray, strong enough at small size. Small flat circular vertex points at the six real mesh corners, aligned precisely with their connecting edges; selected vertices match their colored edge. Every point belongs to the mesh, no floating dots. Both faces remain polygonal with straight edges: show attribute selection, not an actual rounded surface. The single connected mesh is the whole symbol.
+Style: precise contemporary CAD / modeling-tool icon, flat vector-like graphic, generous spacing, elegant optical balance, crisp antialiasing, no plastic rendering. Coherent perspective and clean topology. Do not add topology subdivisions. The mesh occupies about 68 percent of the canvas and is centered. Distinct silhouette and high contrast readable at 32 pixels.
+Background: deep charcoal #171D27 rounded-square tile occupying 92 percent of the canvas with generous safe margin. Real transparent alpha outside the rounded-square tile.
+Palette: orange #FF872D selected crease, blue #37B8F4 selected bevel-weight edge, neutral slate surfaces, pale gray mesh outline. Broad controlled strokes and small FLAT vertex nodes. No gradients, glossy shading, reflections, 3D spherical beads, decorative shadows, glow or textures.
+No text, letters, numbers, UI panels, sliders, arrows, logo badges, Blender logo, watermark, border, comparison sheet, extra icons, mockups or scene. One finished square icon only.
+```
+
+### Small-size readability refinement
+
+```text
+Use case: precise-object-edit.
+Edit target: the supplied Quick Crease Weight mesh icon.
+Keep the exact existing concept and composition: a single connected patch of two quadrilateral mesh faces, six real corner vertices, shared central ORANGE straight crease edge and outer-right BLUE straight bevel-weight edge, subdued gray other edges, dark rounded square, and transparency outside the tile.
+Make one targeted readability improvement for a 32 pixel application icon: increase the thickness of the orange and blue selected edges to about THREE times their current thickness (roughly 4 percent of the full canvas width, strong broad strokes). Increase the gray mesh-outline stroke to about 1.6 times its current thickness. Keep the six flat circular vertex markers only slightly wider than the colored strokes; they must read as precise mesh vertices, not large spheres. Darken both gray face fills substantially toward charcoal slate, preserving the slight tonal distinction between faces so the bright colored edge attributes become the focal point. Keep all mesh lines straight and all nodes exactly at the connected corners. Preserve perspective, positions, tile size and layout.
+Style: crisp flat antialiased vector-like UI asset with solid colors. Warm orange crease, bright sky-blue bevel-weight selection. No glow, no 3D beads, no texture or added elements. No letters or numbers. Genuine transparent alpha outside the rounded square. Output one finished square icon.
 ```
 
 ## Cover
