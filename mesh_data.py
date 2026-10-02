@@ -6,7 +6,7 @@ import bmesh
 
 
 def selection_domain(select_mode):
-    # Match the source add-on: vertex selection takes precedence in mixed modes.
+    # Vertex selection takes precedence in mixed modes.
     return "POINT" if select_mode[0] else "EDGE"
 
 

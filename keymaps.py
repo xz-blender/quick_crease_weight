@@ -43,5 +43,3 @@ def draw(layout, context):
                 rna_keymap_ui.draw_kmi([], config, keymap, item, box, 0)
         else:
             box.label(text="快捷键将在 Blender 更新键位配置后显示", icon="INFO")
-    if keymap and any(item.active and item.idname == "pie.shift_e" for item in keymap.keymap_items):
-        layout.label(text="检测到原饼菜单快捷键：请禁用旧绑定或为本插件改键。", icon="ERROR")

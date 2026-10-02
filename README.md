@@ -7,10 +7,10 @@
 Automatically target vertices or edges in Mesh Edit Mode, then drag to adjust.
 
 [![Blender](https://img.shields.io/badge/Blender-4.2%2B-E87D0D?style=flat-square&logo=blender&logoColor=white)](#compatibility)
-[![Version](https://img.shields.io/badge/version-1.0.0-38BDF8?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.0-38BDF8?style=flat-square)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-GPL--2.0--or--later-7C83FD?style=flat-square)](LICENSE)
 
-**[Download the add-on ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.0.0.zip)** · [Quick start](#quick-start) · [Customization](#customization) · [简体中文](README.zh-CN.md)
+**[Download the add-on ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.1.0.zip)** · [Quick start](#quick-start) · [Customization](#customization) · [简体中文](README.zh-CN.md)
 
 <img src="docs/images/crease-hud.png" alt="Vertex Edit Mode with crease value 0.65" width="100%">
 
@@ -22,11 +22,11 @@ Automatically target vertices or edges in Mesh Edit Mode, then drag to adjust.
 
 - **Selection-aware:** vertex mode targets vertex attributes; edge and face modes target edges.
 - **Two tools:** Shift + E for creases, Ctrl + Shift + E for bevel weights.
-- **Live HUD:** attribute, selection count, value, progress bar, and controls in the viewport.
+- **Live HUD:** a rounded card with a prominent value, selection badge, pill-shaped progress bar, and grouped key hints.
 - **Customizable:** native Blender shortcut editing, mouse sensitivity, and HUD styling.
 - **Reversible:** cancel restores individual values; confirmed operations support Blender undo.
 - **Multi-object editing:** shared mesh data is processed once.
-- **Standalone:** no third-party Python packages or original pie-menu add-on required.
+- **Standalone:** no third-party Python packages required.
 
 ## Quick start
 
@@ -59,7 +59,7 @@ Open **Preferences → Add-ons → Quick Crease Weight**.
 | Shortcuts | Key, modifiers, enabled state |
 | Interaction | Mouse sensitivity |
 | HUD layout | Bottom, top, or cursor; horizontal and vertical offsets |
-| HUD appearance | Font size, text/value colors, background color and opacity, text shadow |
+| HUD appearance | Font size, text/value colors, background opacity, corner radius, card shadow, text shadow |
 | Visibility | HUD, help text, progress bar |
 
 <img src="docs/images/bevel-hud.png" alt="Custom orange HUD at the top of the viewport showing edge bevel weight 0.70" width="100%">
@@ -85,7 +85,6 @@ Settings persist with Blender preferences. Save manually if Auto-Save Preference
 Vertex mode takes priority in mixed selection modes. Only visible, selected elements are affected. Cancel also removes attribute layers created by the current operation.
 
 - **No visible bevel?** Add a Bevel modifier, choose the Weight limit method, and select the appropriate vertex/edge affect mode. Creases are typically viewed with a Subdivision Surface modifier.
-- **Shortcut conflict with wxz_pie_menus?** Disable its two `pie.shift_e` bindings or assign different shortcuts here. This add-on does not change the original add-on's settings.
 - **Mixed starting values?** Cancel restores each element's original value, including across multiple meshes.
 
 ## Compatibility
@@ -94,8 +93,8 @@ Declared minimum: **Blender 4.2**. Local verification results:
 
 | Version | Integration tests | Window interaction checks |
 | --- | --- | --- |
-| 4.3.2 | 10 passed | — |
-| 4.5.4 LTS | 10 passed | Shortcuts, remapping, cancel, undo, HUD, preferences passed |
+| 4.3.2 | 10 passed | Narrow viewport, rounded HUD, shortcuts, cancel and undo passed |
+| 4.5.4 LTS | 10 passed | Shortcuts, remapping, cancel, undo, rounded HUD and preferences passed |
 | 5.3.0 Alpha, local build | 10 passed | — |
 | 4.2 | Not locally tested | Not locally tested |
 
@@ -112,7 +111,7 @@ $blender = 'C:\path\to\blender.exe'
 & $blender --factory-startup --command extension validate
 New-Item -ItemType Directory -Path dist -Force | Out-Null
 & $blender --factory-startup --command extension build --output-dir dist
-& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.0.0.zip
+& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.1.0.zip
 ```
 
 For real window checks:
@@ -127,6 +126,6 @@ The UI script uses a factory-startup test window, does not save user preferences
 
 ## Credits and license
 
-Extracted and refactored from `pie/E_pie.py` in [xz-blender/wxz_pie_menus](https://github.com/xz-blender/wxz_pie_menus). Original feature author: **WXZ**.
+**Author:** WXZ.
 
 Licensed under **GPL-2.0-or-later**: GNU GPL version 2 or, at your option, any later version. The version 2 text is included in [LICENSE](LICENSE).

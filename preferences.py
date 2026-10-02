@@ -27,15 +27,17 @@ class QCW_Preferences(bpy.types.AddonPreferences):
     ), default="BOTTOM")
     hud_offset_x: IntProperty(name="水平偏移", default=0, min=-2000, max=2000)
     hud_offset_y: IntProperty(name="垂直偏移", default=60, min=-2000, max=2000)
-    hud_font_size: IntProperty(name="数值字号", default=32, min=12, max=96)
+    hud_font_size: IntProperty(name="数值字号", default=38, min=12, max=96)
+    hud_corner_radius: IntProperty(name="圆角半径", description="卡片圆角大小，0 为直角", default=16, min=0, max=32)
+    hud_panel_shadow: BoolProperty(name="卡片阴影", default=True)
     hud_text_color: FloatVectorProperty(name="文字颜色", subtype="COLOR", size=4,
-                                       default=(0.9, 0.93, 1.0, 1.0), min=0.0, max=1.0)
+                                       default=(0.84, 0.88, 0.95, 1.0), min=0.0, max=1.0)
     hud_value_color: FloatVectorProperty(name="数值与进度条颜色", subtype="COLOR", size=4,
-                                        default=(0.3, 0.8, 1.0, 1.0), min=0.0, max=1.0)
+                                        default=(0.25, 0.75, 1.0, 1.0), min=0.0, max=1.0)
     hud_background: BoolProperty(name="显示背景", default=True)
     hud_background_color: FloatVectorProperty(name="背景颜色与透明度", subtype="COLOR", size=4,
-                                             default=(0.025, 0.035, 0.055, 0.82), min=0.0, max=1.0)
-    hud_shadow: BoolProperty(name="文字阴影", default=True)
+                                             default=(0.022, 0.029, 0.043, 0.94), min=0.0, max=1.0)
+    hud_shadow: BoolProperty(name="文字阴影", default=False)
     hud_show_help: BoolProperty(name="显示操作提示", default=True)
     hud_show_bar: BoolProperty(name="显示数值进度条", default=True)
 
@@ -52,12 +54,15 @@ class QCW_Preferences(bpy.types.AddonPreferences):
         column = box.column()
         column.enabled = self.show_hud
         column.use_property_split = True
-        for name in ("hud_anchor", "hud_offset_x", "hud_offset_y", "hud_font_size",
+        for name in ("hud_anchor", "hud_offset_x", "hud_offset_y", "hud_font_size", "hud_corner_radius",
                      "hud_text_color", "hud_value_color", "hud_background"):
             column.prop(self, name)
         row = column.row()
         row.enabled = self.hud_background
         row.prop(self, "hud_background_color")
+        row = column.row()
+        row.enabled = self.hud_background
+        row.prop(self, "hud_panel_shadow")
         for name in ("hud_shadow", "hud_show_help", "hud_show_bar"):
             column.prop(self, name)
         layout.label(text="左键/Enter 确认；右键/Esc 还原；Shift 吸附 0.1；Ctrl=1；Alt=0。")

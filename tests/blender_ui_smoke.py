@@ -13,8 +13,8 @@ import bmesh
 import bpy
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "tests" / "artifacts"
-OUTPUT.mkdir(exist_ok=True)
+OUTPUT = Path(os.environ.get("QCW_TEST_OUTPUT", str(ROOT / "tests" / "artifacts")))
+OUTPUT.mkdir(parents=True, exist_ok=True)
 sys.path.insert(0, str(ROOT.parent))
 addon_utils.enable(ROOT.name, default_set=True)
 from quick_crease_weight import hud, operators, preferences
@@ -79,6 +79,15 @@ def values(attribute, edge=False):
 
 
 def setup():
+    for obj in bpy.context.scene.objects:
+        if obj.type in {"CAMERA", "LIGHT"}:
+            obj.hide_set(True)
+    view = area.spaces.active
+    view.region_3d.view_distance = 6.5
+    view.overlay.show_floor = False
+    view.overlay.show_axis_x = False
+    view.overlay.show_axis_y = False
+    view.overlay.show_cursor = False
     with bpy.context.temp_override(window=window, area=area, region=region):
         bpy.ops.object.mode_set(mode="EDIT")
         bpy.context.tool_settings.mesh_select_mode = (True, False, False)
@@ -160,6 +169,27 @@ def undo_and_change_shortcut():
 def capture_cursor():
     assert active().attribute_kind == "crease"
     screenshot("hud-cursor.png")
+
+
+def extreme_style():
+    prefs.hud_background = True
+    prefs.hud_show_help = True
+    prefs.hud_show_bar = True
+    prefs.hud_font_size = 96
+    prefs.hud_corner_radius = 32
+    prefs.hud_offset_x = 2000
+    prefs.hud_offset_y = 2000
+    active()._set_value(1)
+
+
+def capture_extreme():
+    screenshot("hud-large-rounded.png")
+    prefs.hud_corner_radius = 0
+    active()._set_value(0)
+
+
+def capture_square():
+    screenshot("hud-square-zero.png")
     send("ESC")
 
 
@@ -169,6 +199,10 @@ def show_preferences():
     prefs.hud_background = True
     prefs.hud_show_help = True
     prefs.hud_show_bar = True
+    prefs.hud_font_size = 38
+    prefs.hud_corner_radius = 16
+    prefs.hud_offset_x = 0
+    prefs.hud_offset_y = 60
     bpy.utils.register_class(QCW_PT_smoke_preferences)
     area.type = "PREFERENCES"
     bpy.context.preferences.active_section = "ADDONS"
@@ -185,13 +219,15 @@ def finish():
         "success": True, "blender": bpy.app.version_string,
         "hud_draws": draw_count, "preference_draws": pref_draw_count,
         "checks": ["Shift+E vertex crease", "Ctrl+Shift+E edge bevel weight", "cancel restore",
-                   "confirm and undo", "custom shortcut", "HUD styles", "preferences layout"],
+                   "confirm and undo", "custom shortcut", "HUD styles", "preferences layout",
+                   "large font and corner radius", "square corners", "zero and full progress"],
     }, ensure_ascii=False, indent=2), encoding="utf-8")
     bpy.ops.wm.quit_blender()
 
 
 steps = iter((lambda: send("ESC"), setup, start_crease, adjust_crease, move_crease, capture_crease, start_bevel,
-              adjust_bevel, capture_bevel, undo_and_change_shortcut, capture_cursor, show_preferences, finish))
+              adjust_bevel, capture_bevel, undo_and_change_shortcut, capture_cursor,
+              extreme_style, capture_extreme, capture_square, show_preferences, finish))
 
 
 def tick():
