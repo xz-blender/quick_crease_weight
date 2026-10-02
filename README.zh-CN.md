@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/media/icon.png" alt="Quick Crease Weight 插件图标" width="88" height="88">
+
 # Quick Crease Weight
 
 **两组快捷键，让折痕与倒角权重跟上建模节奏。**
@@ -13,9 +15,9 @@
 
 **[下载插件 ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.0.zip)** · [快速开始](#快速开始) · [自定义设置](#自定义设置) · [English](README.md)
 
-<img src="docs/images/crease-hud.png" alt="Blender 顶点编辑模式中，橙色 HUD 显示折痕值 0.65" width="100%">
+<img src="docs/media/cover.jpg" alt="Quick Crease Weight 封面：橙色折痕、蓝色倒角权重" width="100%">
 
-<sub>实际 Blender 4.5.4 视口截图：左侧数值 HUD，右侧独立悬浮按键列表。</sub>
+<sub>橙色折痕 · 蓝色倒角权重 · 为网格编辑模式设计。</sub>
 
 </div>
 
@@ -32,6 +34,12 @@
 | **多物体编辑** | 同时调整多个编辑中的网格，共享网格只处理一次。 |
 | **高效更新** | 缓存 HUD 图形与布局，仅在应用值变化时重写网格。 |
 | **独立运行** | 无第三方 Python 依赖，安装后即可使用。 |
+
+## 操作演示
+
+<img src="docs/media/demo.gif" alt="Blender 实录：Shift E 调整顶点折痕，Ctrl Shift E 调整边倒角权重，Ctrl 和 Alt 快速设为 1 与 0" width="100%">
+
+使用 **Blender 4.5.4** 和真实插件录制。细分曲面与倒角修改器用于展示权重效果。[观看或下载 MP4](docs/media/demo.mp4)。
 
 ## 快速开始
 
@@ -174,6 +182,8 @@ New-Item -ItemType Directory -Path dist -Force | Out-Null
 </details>
 
 ## 作者与许可
+
+图标、封面和演示文件已整理为 [媒体素材包](docs/media/README.md)，包含后续向 Blender 官方扩展平台提交时可使用的导出文件。
 
 作者：**WXZ**。
 

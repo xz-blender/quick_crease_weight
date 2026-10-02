@@ -1,0 +1,15 @@
+# Image generation prompts
+
+Created with the built-in `image_gen` tool. Orange crease / blue bevel matches the add-on defaults. The cover used the original icon as a visual brand reference.
+
+## Icon
+
+```text
+Use case: logo-brand. Asset type: square application icon for the open-source Blender add-on Quick Crease Weight. Create one exceptionally clean, original icon at 1024 x 1024 pixels. A bold isometric mesh-corner/cube outline forms a single compact geometric symbol, with the left/top sharp crease edges in vivid warm orange #FF7D2D and the right/bottom softened beveled edges in bright sky blue #38BDF8. A few carefully placed vertex nodes communicate mesh editing. Front-facing centered composition, strong silhouette readable at 32 pixels. Flat precision vector-like craftsmanship, consistent substantial stroke widths, optically balanced spacing, no fine wireframe clutter. Place the symbol on a deep charcoal-navy rounded-square tile with generous safe padding; genuine transparent pixels outside the rounded tile. Very restrained depth only, crisp smooth antialiasing. No text, no letters, no Blender logo, no other brand logos, no watermark, no surrounding objects, no mockup, no border outside the tile. Orange crease / blue bevel must remain unmistakable. Output a single finished icon, not an icon sheet.
+```
+
+## Cover
+
+```text
+Use case: ads-marketing. Asset type: polished cover / featured image for the open-source Blender add-on Quick Crease Weight. Generate a finished wide 16:9 landscape cover, exactly 2560 x 1440 pixels, suitable for a Blender Extensions listing and GitHub README. Input image is a BRAND REFERENCE ONLY: use its original orange sharp-corner / blue rounded-corner mesh-cube motif consistently; do not reproduce a giant app tile. Deep charcoal navy studio background. Elegant editorial product art, meticulous spacing, clean legible typography, subtle dimensional mesh geometry. Compose a strong left typography block and one large refined isometric mesh cube on the right: its orange edges stay sharp to symbolize crease, blue edges are smoothly beveled to symbolize bevel weight. Show a few intentional vertex nodes and a soft grounded glow, with tasteful subdued topology lines. Use only exact text: headline 'QUICK' on one line, then 'CREASE WEIGHT' on the next two balanced lines if needed; subtitle 'Creases & bevel weights. Two shortcuts.'; a small orange label 'Shift + E  /  Crease' and a blue label 'Ctrl + Shift + E  /  Bevel Weight'. Typography must be large, impeccably spelled, readable at thumbnail size. Generous safe margins at least 8 percent on all sides; no tiny text. Colors: orange #FF7D2D, blue #38BDF8, soft off-white, deep charcoal. A small version of the reference cube mark may accompany the title. No screenshot or invented UI; this is conceptual branded cover art. No Blender official logo, no official endorsement badge, no price, no watermark, no unrelated objects. Confident restrained composition, not noisy sci-fi. Preserve a true 16:9 aspect ratio with no border or letterboxing.
+```

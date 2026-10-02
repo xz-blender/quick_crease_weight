@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/media/icon.png" alt="Quick Crease Weight icon" width="88" height="88">
+
 # Quick Crease Weight
 
 **Two shortcuts for creases and bevel weights in Blender.**
@@ -12,9 +14,9 @@ Automatically target vertices or edges in Mesh Edit Mode, then drag to adjust.
 
 **[Download the add-on ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.0.zip)** · [Quick start](#quick-start) · [Customization](#customization) · [简体中文](README.zh-CN.md)
 
-<img src="docs/images/crease-hud.png" alt="Vertex Edit Mode with crease value 0.65" width="100%">
+<img src="docs/media/cover.jpg" alt="Quick Crease Weight — orange creases and blue bevel weights" width="100%">
 
-<sub>Actual Blender 4.5.4 capture. The current add-on interface is in Chinese.</sub>
+<sub>Orange creases. Blue bevel weights. Built for Mesh Edit Mode.</sub>
 
 </div>
 
@@ -29,6 +31,12 @@ Automatically target vertices or edges in Mesh Edit Mode, then drag to adjust.
 - **Multi-object editing:** shared mesh data is processed once.
 - **Efficient updates:** cached HUD geometry and layout, plus mesh writes only when the applied value changes.
 - **Standalone:** no third-party Python packages required.
+
+## See it in action
+
+<img src="docs/media/demo.gif" alt="Blender demo: adjust vertex crease with Shift E, edge bevel weight with Ctrl Shift E, then use Ctrl and Alt to set 1 and 0" width="100%">
+
+Recorded in **Blender 4.5.4** with the actual add-on. Subdivision Surface and Bevel modifiers visualize the weights; the HUD is currently in Chinese. [Watch or download the MP4](docs/media/demo.mp4).
 
 ## Quick start
 
@@ -142,6 +150,8 @@ The UI script uses a factory-startup test window, does not save user preferences
 </details>
 
 ## Credits and license
+
+Icons, cover art, and the recorded demo are available in the [media kit](docs/media/README.md), including ready-to-use exports for a future Blender Extensions submission.
 
 **Author:** WXZ.
 
