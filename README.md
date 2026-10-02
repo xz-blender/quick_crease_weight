@@ -7,10 +7,10 @@
 Automatically target vertices or edges in Mesh Edit Mode, then drag to adjust.
 
 [![Blender](https://img.shields.io/badge/Blender-4.2%2B-E87D0D?style=flat-square&logo=blender&logoColor=white)](#compatibility)
-[![Version](https://img.shields.io/badge/version-1.1.2-38BDF8?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.2.0-38BDF8?style=flat-square)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-GPL--2.0--or--later-7C83FD?style=flat-square)](LICENSE)
 
-**[Download the add-on ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.1.2.zip)** · [Quick start](#quick-start) · [Customization](#customization) · [简体中文](README.zh-CN.md)
+**[Download the add-on ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.0.zip)** · [Quick start](#quick-start) · [Customization](#customization) · [简体中文](README.zh-CN.md)
 
 <img src="docs/images/crease-hud.png" alt="Vertex Edit Mode with crease value 0.65" width="100%">
 
@@ -27,6 +27,7 @@ Automatically target vertices or edges in Mesh Edit Mode, then drag to adjust.
 - **Customizable:** native Blender shortcut editing, mouse sensitivity, and HUD styling.
 - **Reversible:** cancel restores individual values; confirmed operations support Blender undo.
 - **Multi-object editing:** shared mesh data is processed once.
+- **Efficient updates:** cached HUD geometry and layout, plus mesh writes only when the applied value changes.
 - **Standalone:** no third-party Python packages required.
 
 ## Quick start
@@ -90,15 +91,28 @@ Vertex mode takes priority in mixed selection modes. Only visible, selected elem
 - **No visible bevel?** Add a Bevel modifier, choose the Weight limit method, and select the appropriate vertex/edge affect mode. Creases are typically viewed with a Subdivision Surface modifier.
 - **Mixed starting values?** Cancel restores each element's original value, including across multiple meshes.
 
+## Performance
+
+Local Blender 4.5.4 comparison against v1.1.2, using the same benchmark:
+
+| Scenario | Before | v1.2.0 |
+| --- | ---: | ---: |
+| HUD idle / cursor movement, median CPU submission | ~1.29 ms | ~0.09 ms |
+| HUD changing values, median CPU submission | 1.29 ms | 0.20 ms |
+| Update 200,344 selected edges, median per changed value | 8.18–8.36 ms | 3.82–3.83 ms |
+| Mesh updates for 20 repeated identical values | 20 | 0 |
+
+These timings measure add-on work, not total viewport frame time. The first write builds the element cache; later writes reuse it. See [methodology and full results](docs/PERFORMANCE.md).
+
 ## Compatibility
 
 Declared minimum: **Blender 4.2**. Local verification results:
 
 | Version | Integration tests | Window interaction checks |
 | --- | --- | --- |
-| 4.3.2 | 10 passed | Narrow viewport, rounded HUD, shortcuts, cancel and undo passed |
-| 4.5.4 LTS | 10 passed | Shortcuts, remapping, cancel, undo, rounded HUD and preferences passed |
-| 5.3.0 Alpha, local build | 10 passed | — |
+| 4.3.2 | 13 passed | Narrow viewport, rounded HUD, shortcuts, cancel and undo passed |
+| 4.5.4 LTS | 13 passed | Shortcuts, remapping, cancel, undo, rounded HUD and preferences passed |
+| 5.3.0 Alpha, local build | 13 passed | — |
 | 4.2 | Not locally tested | Not locally tested |
 
 These results do not imply testing on every operating system or Blender build.
@@ -114,7 +128,7 @@ $blender = 'C:\path\to\blender.exe'
 & $blender --factory-startup --command extension validate
 New-Item -ItemType Directory -Path dist -Force | Out-Null
 & $blender --factory-startup --command extension build --output-dir dist
-& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.1.2.zip
+& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.2.0.zip
 ```
 
 For real window checks:

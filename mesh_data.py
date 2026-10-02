@@ -23,6 +23,7 @@ class MeshSnapshot:
     indices: list
     originals: list
     existed: bool
+    targets: tuple = ()
 
 
 class WeightEdit:
@@ -31,6 +32,7 @@ class WeightEdit:
         self.name = attribute_name(kind, self.domain)
         self.snapshots = []
         self.changed = False
+        self._last_value = None
         seen = set()
         for obj in context.objects_in_mode_unique_data:
             if obj.type != "MESH" or obj.data.as_pointer() in seen:
@@ -39,17 +41,25 @@ class WeightEdit:
             seen.add(mesh.as_pointer())
             bm = bmesh.from_edit_mesh(mesh)
             sequence = bm.verts if self.domain == "POINT" else bm.edges
-            elements = [(index, element) for index, element in enumerate(sequence) if element.select and not element.hide]
-            if not elements:
+            layer = sequence.layers.float.get(self.name)
+            indices = []
+            values = []
+            if layer is None:
+                indices = [index for index, element in enumerate(sequence) if element.select and not element.hide]
+                values = [0.0] * len(indices)
+            else:
+                for index, element in enumerate(sequence):
+                    if element.select and not element.hide:
+                        indices.append(index)
+                        values.append(element[layer])
+            if not indices:
                 continue
             attribute = mesh.attributes.get(self.name)
             if attribute and (attribute.domain != self.domain or attribute.data_type != "FLOAT"):
                 raise ValueError(f"{obj.name}: {self.name} 已存在，但不是正确域的浮点属性")
-            layer = sequence.layers.float.get(self.name)
-            values = [element[layer] for _, element in elements] if layer is not None else [0.0] * len(elements)
             # Creating the first custom-data layer can invalidate BMVert/BMEdge
             # wrappers. Keep stable indices; this modal tool never edits topology.
-            self.snapshots.append(MeshSnapshot(mesh, bm, [index for index, _ in elements], values, layer is not None))
+            self.snapshots.append(MeshSnapshot(mesh, bm, indices, values, layer is not None))
         if not self.snapshots:
             raise ValueError("请先选择顶点或边")
         self.count = sum(len(snapshot.indices) for snapshot in self.snapshots)
@@ -74,6 +84,8 @@ class WeightEdit:
         if not self.valid():
             raise RuntimeError("网格已离开编辑模式")
         value = max(0.0, min(1.0, value))
+        if value == self._last_value:
+            return False
         # Mark before writing so partially completed updates can also be restored.
         self.changed = True
         for snapshot in self.snapshots:
@@ -81,10 +93,16 @@ class WeightEdit:
             layer = layers.get(self.name)
             if layer is None:
                 layer = layers.new(self.name)
-            elements = self._elements(snapshot)
-            for index in snapshot.indices:
-                elements[index][layer] = value
+            # Bind only after layer creation. Adding custom data may invalidate
+            # all element wrappers; refresh them if that happens between writes.
+            if not snapshot.targets or not snapshot.targets[0].is_valid:
+                elements = self._elements(snapshot)
+                snapshot.targets = tuple(elements[index] for index in snapshot.indices)
+            for element in snapshot.targets:
+                element[layer] = value
             self._update(snapshot)
+        self._last_value = value
+        return True
 
     def restore(self):
         if not self.changed:
@@ -107,3 +125,6 @@ class WeightEdit:
             except ReferenceError:
                 continue
         self.changed = False
+        self._last_value = None
+        for snapshot in self.snapshots:
+            snapshot.targets = ()

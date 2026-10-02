@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-"""Compact viewport cards with feathered rounded edges and measured text."""
+"""Cached viewport cards with feathered rounded edges and measured text."""
 from math import cos, pi, sin
 
 import blf
@@ -34,11 +34,24 @@ def outline(x, y, width, height, radius, segments):
             for cx, cy, angle in corners for step in range(segments + 1)]
 
 
-def rounded_rect(shader, x, y, width, height, radius, color):
+class ShapeBatch:
+    """Accumulate ordered translucent shapes into one GPU submission."""
+
+    def __init__(self):
+        self.positions = []
+        self.colors = []
+        self.triangles = []
+
+    def build(self, shader):
+        if not self.positions:
+            return None
+        return batch_for_shader(shader, "TRIS", {"pos": self.positions, "color": self.colors},
+                                indices=self.triangles)
+
+
+def rounded_rect(shapes, x, y, width, height, radius, color):
     if width <= 0 or height <= 0 or color[3] <= 0:
         return
-    # BLF can reset GPU blending between text and shape draws.
-    gpu.state.blend_set("ALPHA")
     radius = max(0.0, min(radius, width / 2, height / 2))
     segments = max(4, min(24, int(radius * 0.8)))
     # Interpolate alpha across a one-pixel fringe, independent of UI scale.
@@ -54,9 +67,10 @@ def rounded_rect(shader, x, y, width, height, radius, color):
     for index in range(count):
         a, b = 1 + index, 1 + (index + 1) % count
         triangles.extend(((0, a, b), (a, a + count, b + count), (a, b + count, b)))
-    batch = batch_for_shader(shader, "TRIS", {"pos": positions, "color": colors}, indices=triangles)
-    shader.bind()
-    batch.draw(shader)
+    offset = len(shapes.positions)
+    shapes.positions.extend(positions)
+    shapes.colors.extend(colors)
+    shapes.triangles.extend(tuple(vertex + offset for vertex in triangle) for triangle in triangles)
 
 
 def text_width(text, size):
@@ -107,7 +121,7 @@ def overlay_layout(operator, prefs, scale):
             "height": max(card["height"], help_layout["height"] if help_layout else 0)}
 
 
-def draw_panel(shader, x, y, width, height, prefs, scale, color):
+def build_panel(shapes, x, y, width, height, prefs, scale, color):
     if not prefs.hud_background:
         return
     radius = prefs.hud_corner_radius * scale
@@ -115,23 +129,23 @@ def draw_panel(shader, x, y, width, height, prefs, scale, color):
     if prefs.hud_panel_shadow:
         for spread, opacity in ((7, 0.045), (4, 0.07), (1, 0.12)):
             edge = spread * scale
-            rounded_rect(shader, x - edge, y - edge - 3 * scale,
+            rounded_rect(shapes, x - edge, y - edge - 3 * scale,
                          width + 2 * edge, height + 2 * edge, radius + edge,
                          (0.0, 0.0, 0.0, opacity * background[3]))
-    rounded_rect(shader, x, y, width, height, radius, background)
-    rounded_rect(shader, x + radius, y + height - scale, max(0, width - 2 * radius),
+    rounded_rect(shapes, x, y, width, height, radius, background)
+    rounded_rect(shapes, x + radius, y + height - scale, max(0, width - 2 * radius),
                  scale, scale / 2, tint(color, 0.1 * background[3]))
 
 
-def draw_hints(shader, x, y, layout, size, scale, color):
+def build_hints(shapes, texts, x, y, layout, size, scale, color):
     left = x + layout["pad"]
     top = y + layout["height"] - layout["pad"]
     key_width = layout["key_width"]
     for key, label in HINTS:
-        rounded_rect(shader, left, top - layout["row_height"], key_width,
+        rounded_rect(shapes, left, top - layout["row_height"], key_width,
                      layout["row_height"], 5 * scale, tint(color, 0.075))
-        text_at(key, left + 8 * scale, top - 17 * scale, size, tint(color, 0.95))
-        text_at(label, left + key_width + 12 * scale, top - 17 * scale, size, tint(color, 0.72))
+        texts.append((key, left + 8 * scale, top - 17 * scale, size, tint(color, 0.95)))
+        texts.append((label, left + key_width + 12 * scale, top - 17 * scale, size, tint(color, 0.72)))
         top -= layout["row_height"] + layout["row_gap"]
 
 
@@ -159,6 +173,113 @@ def viewport_bounds(area, region):
     return left, bottom, max(1, right - left), max(1, top - bottom)
 
 
+class HudRenderer:
+    """Per-operation GPU resources; cursor motion translates cached local geometry."""
+
+    def __init__(self):
+        self.shader = gpu.shader.from_builtin("SMOOTH_COLOR")
+        self.signature = None
+        self.fill_value = None
+        self.fill_batch = None
+
+    def rebuild(self, operator, prefs, ui_scale, view_width, view_height, color, accent):
+        group = overlay_layout(operator, prefs, ui_scale)
+        self.margin = min(8 * ui_scale, view_width / 8, view_height / 8)
+        fit = min(1.0, (view_width - 2 * self.margin) / group["width"],
+                  (view_height - 2 * self.margin) / group["height"])
+        if fit < 1:
+            group = overlay_layout(operator, prefs, ui_scale * fit)
+        self.width, self.height = group["width"], group["height"]
+        layout = group["card"]
+        width, height, scale = layout["width"], layout["height"], group["scale"]
+        y = (self.height - height) / 2
+        pad, small, size = layout["pad"], layout["small"], layout["size"]
+        shapes, self.texts = ShapeBatch(), []
+        build_panel(shapes, 0, y, width, height, prefs, scale, color)
+        if group["help"]:
+            help_x = width + group["gap"]
+            help_y = (self.height - group["help"]["height"]) / 2
+            build_panel(shapes, help_x, help_y, group["help"]["width"], group["help"]["height"],
+                       prefs, scale, color)
+        left, right = pad, width - pad
+        top = y + height - pad
+        rounded_rect(shapes, left, top - 16 * scale, 6 * scale, 6 * scale, 3 * scale, accent)
+        self.texts.append((operator.display_name, left + 14 * scale, top - 18 * scale,
+                           layout["title_size"], color))
+        badge_width = text_width(layout["badge"], small) + 18 * scale
+        rounded_rect(shapes, right - badge_width, top - 24 * scale, badge_width, 24 * scale,
+                     12 * scale, tint(accent, 0.1))
+        self.texts.append((layout["badge"], right - badge_width + 9 * scale, top - 17 * scale,
+                           small, tint(accent, 0.9)))
+        top -= layout["header"]
+        self.value_text = (left, top - size - 6 * scale, size, accent)
+        top -= layout["value_row"]
+        self.bar = None
+        if prefs.hud_show_bar:
+            bar_y, bar_height = top - 6 * scale, 6 * scale
+            self.bar = (left, bar_y, right - left, bar_height, accent)
+            rounded_rect(shapes, left, bar_y, right - left, bar_height, bar_height / 2, tint(color, 0.1))
+        if group["help"]:
+            build_hints(shapes, self.texts, help_x, help_y, group["help"], small, scale, color)
+        self.static_batch = shapes.build(self.shader)
+        self.fill_value, self.fill_batch = None, None
+
+    def render(self, operator, context, prefs):
+        view_x, view_y, view_width, view_height = viewport_bounds(context.area, context.region)
+        ui_scale = context.preferences.system.ui_scale
+        color = tuple(prefs.hud_text_color)
+        accent = tuple(prefs.hud_crease_color if operator.attribute_kind == "crease" else prefs.hud_bevel_color)
+        signature = (view_width, view_height, ui_scale, operator.display_name, operator._edit.domain,
+                     operator._edit.count, prefs.hud_font_size, prefs.hud_corner_radius,
+                     prefs.hud_show_help, prefs.hud_show_bar, prefs.hud_background,
+                     prefs.hud_panel_shadow, tuple(prefs.hud_background_color), color, accent)
+        if signature != self.signature:
+            self.rebuild(operator, prefs, ui_scale, view_width, view_height, color, accent)
+            self.signature = signature
+        if self.fill_value != operator.value:
+            self.fill_batch = None
+            if self.bar:
+                left, bar_y, bar_width, bar_height, accent = self.bar
+                shapes = ShapeBatch()
+                rounded_rect(shapes, left, bar_y, bar_width * operator.value,
+                             bar_height, bar_height / 2, accent)
+                self.fill_batch = shapes.build(self.shader)
+            self.formatted_value = f"{operator.value:.2f}"
+            self.fill_value = operator.value
+        offset_x, offset_y = prefs.hud_offset_x * ui_scale, prefs.hud_offset_y * ui_scale
+        if prefs.hud_anchor == "CURSOR":
+            x = operator._mouse_region[0] + 24 * ui_scale + offset_x
+            y = operator._mouse_region[1] + offset_y
+        else:
+            x = view_x + (view_width - self.width) / 2 + offset_x
+            y = view_y + view_height - self.height - offset_y if prefs.hud_anchor == "TOP" else view_y + offset_y
+        x = max(view_x + self.margin, min(x, view_x + view_width - self.width - self.margin))
+        y = max(view_y + self.margin, min(y, view_y + view_height - self.height - self.margin))
+        blend = gpu.state.blend_get()
+        try:
+            gpu.state.blend_set("ALPHA")
+            with gpu.matrix.push_pop():
+                gpu.matrix.translate((x, y, 0))
+                self.shader.bind()
+                if self.static_batch:
+                    self.static_batch.draw(self.shader)
+                if self.fill_batch:
+                    self.fill_batch.draw(self.shader)
+            if prefs.hud_shadow:
+                blf.enable(0, blf.SHADOW)
+                blf.shadow(0, 3, 0.0, 0.0, 0.0, 0.6)
+                blf.shadow_offset(0, 1, -1)
+            else:
+                blf.disable(0, blf.SHADOW)
+            for text, tx, ty, size, text_color in self.texts:
+                text_at(text, x + tx, y + ty, size, text_color)
+            tx, ty, size, text_color = self.value_text
+            text_at(self.formatted_value, x + tx, y + ty, size, text_color)
+        finally:
+            blf.disable(0, blf.SHADOW)
+            gpu.state.blend_set(blend)
+
+
 def draw(operator):
     context = bpy.context
     if context.area != operator._area or context.region != operator._region:
@@ -166,69 +287,6 @@ def draw(operator):
     prefs = get_preferences(context)
     if prefs is None or not prefs.show_hud:
         return
-    region = context.region
-    view_x, view_y, view_width, view_height = viewport_bounds(context.area, region)
-    ui_scale = context.preferences.system.ui_scale
-    group = overlay_layout(operator, prefs, ui_scale)
-    margin = min(8 * ui_scale, view_width / 8, view_height / 8)
-    fit = min(1.0, (view_width - 2 * margin) / group["width"],
-              (view_height - 2 * margin) / group["height"])
-    if fit <= 0:
-        return
-    if fit < 1:
-        group = overlay_layout(operator, prefs, ui_scale * fit)
-    layout = group["card"]
-    width, height, scale = group["width"], group["height"], group["scale"]
-    pad, small, size = layout["pad"], layout["small"], layout["size"]
-    offset_x, offset_y = prefs.hud_offset_x * ui_scale, prefs.hud_offset_y * ui_scale
-    if prefs.hud_anchor == "CURSOR":
-        x, y = operator._mouse_region[0] + 24 * ui_scale + offset_x, operator._mouse_region[1] + offset_y
-    else:
-        x = view_x + (view_width - width) / 2 + offset_x
-        y = view_y + view_height - height - offset_y if prefs.hud_anchor == "TOP" else view_y + offset_y
-    x = max(view_x + margin, min(x, view_x + view_width - width - margin))
-    y = max(view_y + margin, min(y, view_y + view_height - height - margin))
-    help_x = x + layout["width"] + group["gap"]
-    help_y = y + (height - group["help"]["height"]) / 2 if group["help"] else y
-    y += (height - layout["height"]) / 2
-    width, height = layout["width"], layout["height"]
-    color = tuple(prefs.hud_text_color)
-    accent = tuple(prefs.hud_crease_color if operator.attribute_kind == "crease" else prefs.hud_bevel_color)
-    blend = gpu.state.blend_get()
-    try:
-        gpu.state.blend_set("ALPHA")
-        shader = gpu.shader.from_builtin("SMOOTH_COLOR")
-        draw_panel(shader, x, y, width, height, prefs, scale, color)
-        if group["help"]:
-            draw_panel(shader, help_x, help_y, group["help"]["width"], group["help"]["height"],
-                       prefs, scale, color)
-        if prefs.hud_shadow:
-            blf.enable(0, blf.SHADOW)
-            blf.shadow(0, 3, 0.0, 0.0, 0.0, 0.6)
-            blf.shadow_offset(0, 1, -1)
-        else:
-            blf.disable(0, blf.SHADOW)
-        left, right = x + pad, x + width - pad
-        top = y + height - pad
-        rounded_rect(shader, left, top - 16 * scale, 6 * scale, 6 * scale, 3 * scale, accent)
-        text_at(operator.display_name, left + 14 * scale, top - 18 * scale,
-                layout["title_size"], color)
-        badge_width = text_width(layout["badge"], small) + 18 * scale
-        rounded_rect(shader, right - badge_width, top - 24 * scale, badge_width, 24 * scale,
-                     12 * scale, tint(accent, 0.1))
-        text_at(layout["badge"], right - badge_width + 9 * scale, top - 17 * scale,
-                small, tint(accent, 0.9))
-        top -= layout["header"]
-        baseline = top - size - 6 * scale
-        text_at(f"{operator.value:.2f}", left, baseline, size, accent)
-        top -= layout["value_row"]
-        if prefs.hud_show_bar:
-            bar_y, bar_height = top - 6 * scale, 6 * scale
-            rounded_rect(shader, left, bar_y, right - left, bar_height, bar_height / 2, tint(color, 0.1))
-            rounded_rect(shader, left, bar_y, (right - left) * operator.value,
-                         bar_height, bar_height / 2, accent)
-        if group["help"]:
-            draw_hints(shader, help_x, help_y, group["help"], small, scale, color)
-    finally:
-        blf.disable(0, blf.SHADOW)
-        gpu.state.blend_set(blend)
+    if getattr(operator, "_hud", None) is None:
+        operator._hud = HudRenderer()
+    operator._hud.render(operator, context, prefs)

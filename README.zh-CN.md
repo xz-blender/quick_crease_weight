@@ -7,11 +7,11 @@
 在 Blender 网格编辑模式中，根据点 / 边选择模式自动选择属性，拖动鼠标即可调整。
 
 [![Blender](https://img.shields.io/badge/Blender-4.2%2B-E87D0D?style=flat-square&logo=blender&logoColor=white)](#兼容性)
-[![Version](https://img.shields.io/badge/version-1.1.2-38BDF8?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.2.0-38BDF8?style=flat-square)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-GPL--2.0--or--later-7C83FD?style=flat-square)](LICENSE)
 [![Dependencies](https://img.shields.io/badge/dependencies-none-34D399?style=flat-square)](#功能一览)
 
-**[下载插件 ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.1.2.zip)** · [快速开始](#快速开始) · [自定义设置](#自定义设置) · [English](README.md)
+**[下载插件 ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.0.zip)** · [快速开始](#快速开始) · [自定义设置](#自定义设置) · [English](README.md)
 
 <img src="docs/images/crease-hud.png" alt="Blender 顶点编辑模式中，橙色 HUD 显示折痕值 0.65" width="100%">
 
@@ -30,6 +30,7 @@
 | **快捷键与外观可定制** | 原生键位编辑器，配合位置、字号、颜色和背景透明度设置。 |
 | **可取消、可撤销** | 取消恢复每个元素的原值；确认后使用 Blender 撤销。 |
 | **多物体编辑** | 同时调整多个编辑中的网格，共享网格只处理一次。 |
+| **高效更新** | 缓存 HUD 图形与布局，仅在应用值变化时重写网格。 |
 | **独立运行** | 无第三方 Python 依赖，安装后即可使用。 |
 
 ## 快速开始
@@ -113,15 +114,28 @@
 
 </details>
 
+## 性能
+
+本机 Blender 4.5.4 中，使用同一基准脚本与 v1.1.2 对比：
+
+| 场景 | 优化前 | v1.2.0 |
+| --- | ---: | ---: |
+| HUD 静止 / 跟随鼠标，CPU 提交耗时中位数 | 约 1.29 ms | 约 0.09 ms |
+| HUD 数值变化，CPU 提交耗时中位数 | 1.29 ms | 0.20 ms |
+| 200,344 条选中边，每次变值写入耗时中位数 | 8.18–8.36 ms | 3.82–3.83 ms |
+| 连续 20 次相同值触发的网格更新次数 | 20 | 0 |
+
+以上测量插件自身的工作耗时，不代表整个视口的帧耗时。首次写入会建立元素缓存，后续写入复用缓存。完整数据与测量方法见 [性能记录](docs/PERFORMANCE.md)。
+
 ## 兼容性
 
 最低声明版本：**Blender 4.2**。以下是本机实际验证记录，不代表所有系统和版本组合都已测试。
 
 | 版本 | 集成检查 | 窗口交互检查 |
 | --- | --- | --- |
-| 4.3.2 | 10 项通过 | 窄视口、圆角 HUD、快捷键、取消与撤销通过 |
-| 4.5.4 LTS | 10 项通过 | 快捷键、改键、取消、撤销、圆角 HUD、偏好设置通过 |
-| 5.3.0 Alpha 本机构建 | 10 项通过 | — |
+| 4.3.2 | 13 项通过 | 窄视口、圆角 HUD、快捷键、取消与撤销通过 |
+| 4.5.4 LTS | 13 项通过 | 快捷键、改键、取消、撤销、圆角 HUD、偏好设置通过 |
+| 5.3.0 Alpha 本机构建 | 13 项通过 | — |
 | 4.2 | 尚未实测 | 尚未实测 |
 
 <details>
@@ -139,7 +153,7 @@ $blender = 'C:\path\to\blender.exe'
 & $blender --factory-startup --command extension validate
 New-Item -ItemType Directory -Path dist -Force | Out-Null
 & $blender --factory-startup --command extension build --output-dir dist
-& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.1.2.zip
+& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.2.0.zip
 ```
 
 界面测试：

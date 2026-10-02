@@ -53,6 +53,7 @@ class WeightOperator:
         self._navigating = False
         self._closed = False
         self._handle = None
+        self._hud = None
         prefs = get_preferences(context)
         self._sensitivity = prefs.sensitivity if prefs else 0.005
         try:
@@ -75,6 +76,8 @@ class WeightOperator:
         if self._handle is not None:
             bpy.types.SpaceView3D.draw_handler_remove(self._handle, "WINDOW")
             self._handle = None
+        self._hud = None
+        self._edit = None
         try:
             self._workspace.status_text_set(None)
             self._area.tag_redraw()
@@ -97,8 +100,10 @@ class WeightOperator:
 
     def _set_value(self, value):
         self.value = max(0.0, min(1.0, value))
-        self._edit.apply(self.value)
-        self._area.tag_redraw()
+        if self._edit.apply(self.value):
+            self._area.tag_redraw()
+            return True
+        return False
 
     def modal(self, context, event):
         if self._closed:
@@ -114,7 +119,9 @@ class WeightOperator:
             return {"CANCELLED"}
 
     def _modal(self, context, event):
-        self._mouse_region = (event.mouse_region_x, event.mouse_region_y)
+        mouse = (event.mouse_region_x, event.mouse_region_y)
+        moved = mouse != getattr(self, "_mouse_region", None)
+        self._mouse_region = mouse
         if event.type in {"RIGHTMOUSE", "ESC"} and event.value == "PRESS":
             self.cancel(context)
             return {"CANCELLED"}
@@ -144,14 +151,21 @@ class WeightOperator:
                 self._rebase(event)
             return {"RUNNING_MODAL"}
         if event.type == "MOUSEMOVE":
+            updated = False
             ctrl = event.ctrl and "ctrl" not in self._blocked_modifiers
             alt = event.alt and "alt" not in self._blocked_modifiers
             if not (ctrl or alt):
                 value = self._origin_value + (event.mouse_x - self._origin_x) * self._sensitivity
                 if event.shift and "shift" not in self._blocked_modifiers:
                     value = round(value * 10) / 10
-                self._set_value(value)
-            self._area.tag_redraw()
+                value = max(0.0, min(1.0, value))
+                # A stationary/vertical mouse event must not flatten mixed values.
+                if value != self.value:
+                    updated = self._set_value(value)
+            if moved and not updated:
+                prefs = get_preferences(context)
+                if prefs and prefs.show_hud and prefs.hud_anchor == "CURSOR":
+                    self._area.tag_redraw()
         return {"RUNNING_MODAL"}
 
 

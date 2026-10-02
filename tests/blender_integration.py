@@ -4,6 +4,7 @@ from pathlib import Path
 import sys
 from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 import addon_utils
 import bmesh
@@ -89,6 +90,37 @@ class IntegrationTests(unittest.TestCase):
         self.assertEqual(self.values("bevel_weight_vert"), [0.0] * 4)
         edit.restore()
         self.assertIsNone(self.bm.verts.layers.float.get("bevel_weight_vert"))
+
+    def test_repeated_values_skip_updates_without_skipping_first_average(self):
+        layer = self.bm.verts.layers.float.new("crease_vert")
+        original = [0.25, 0.75, 0.25, 0.75]
+        for element, value in zip(self.bm.verts, original):
+            element[layer] = value
+        edit = WeightEdit(bpy.context, "crease")
+        with patch.object(WeightEdit, "_update", wraps=WeightEdit._update) as update:
+            edit.apply(edit.initial_value)
+            self.assertEqual(self.values("crease_vert"), [0.5] * 4)
+            edit.apply(0.5)
+            self.assertEqual(update.call_count, 1)
+            edit.apply(3)
+            edit.apply(2)
+            self.assertEqual(update.call_count, 2)
+            self.assertEqual(self.values("crease_vert"), [1] * 4)
+        edit.restore()
+        self.assertEqual(self.values("crease_vert"), original)
+        edit.apply(0.5)
+        self.assertEqual(self.values("crease_vert"), [0.5] * 4)
+        edit.restore()
+
+    def test_layer_creation_between_writes_preserves_targets_and_cancel(self):
+        edit = WeightEdit(bpy.context, "crease")
+        edit.apply(0.25)
+        self.bm.verts.layers.float.new("unrelated_attribute")
+        edit.apply(0.75)
+        self.assertEqual(self.values("crease_vert"), [0.75] * 4)
+        edit.restore()
+        self.assertIsNone(self.bm.verts.layers.float.get("crease_vert"))
+        self.assertIsNotNone(self.bm.verts.layers.float.get("unrelated_attribute"))
 
     def test_hidden_and_empty_selection(self):
         self.bm.verts[0].hide = True
@@ -204,12 +236,31 @@ class IntegrationTests(unittest.TestCase):
         op.modal(bpy.context, event("MOUSEMOVE", x=350))
         self.assertEqual(op.value, 0.25)
         self.assertEqual(op.modal(bpy.context, event("RET")), {"FINISHED"})
+        self.assertIsNone(op._edit)
+        self.assertIsNone(op._hud)
         self.assertEqual(self.values("crease_vert"), [0.25] * 4)
         op = self.make_modal()
         op.modal(bpy.context, event("LEFT_CTRL", ctrl=True))
         operators.cancel_active()
         self.assertEqual(self.values("crease_vert"), [0.25] * 4)
         self.assertEqual(operators.ACTIVE, [])
+
+    def test_stationary_mouse_preserves_mixed_values_and_repeat_snap_skips_update(self):
+        layer = self.bm.verts.layers.float.new("crease_vert")
+        original = [0.125, 0.25, 0.75, 0.875]
+        for element, value in zip(self.bm.verts, original):
+            element[layer] = value
+        op = self.make_modal()
+        op.modal(bpy.context, event("MOUSEMOVE", x=100))
+        self.assertFalse(op._edit.changed)
+        self.assertEqual(self.values("crease_vert"), original)
+        with patch.object(WeightEdit, "_update", wraps=WeightEdit._update) as update:
+            op.modal(bpy.context, event("MOUSEMOVE", x=120, shift=True))
+            op.modal(bpy.context, event("MOUSEMOVE", x=121, shift=True))
+            op.modal(bpy.context, event("MOUSEMOVE", x=122, shift=True))
+            self.assertEqual(update.call_count, 1)
+        op.modal(bpy.context, event("ESC"))
+        self.assertEqual(self.values("crease_vert"), original)
 
 
 area = next(area for area in bpy.context.screen.areas if area.type == "VIEW_3D")

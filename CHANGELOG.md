@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.0 — 2026-10-02
+
+- Cached the HUD shader, measured layout, static geometry, and text positions per operation; combined static shapes into one batch.
+- Reused geometry while following the cursor; only the progress fill is rebuilt when the value changes.
+- Skipped repeated weight writes and mesh updates, cached valid selected-element targets, and reduced selection snapshot allocation.
+- Avoided duplicate redraw requests and preserved mixed weights on stationary or vertical mouse events.
+- Released HUD and selection caches on confirm, cancel, or add-on disable.
+- Added a reproducible Blender benchmark with deterministic work-count checks and expanded integration coverage to 13 tests.
+
 ## 1.1.2 — 2026-10-02
 
 - Set orange as the crease theme and blue as the bevel-weight theme.

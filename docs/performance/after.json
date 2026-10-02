@@ -1,0 +1,66 @@
+{
+  "blender": "4.5.4 LTS",
+  "mesh": {
+    "crease_point": {
+      "selected": 100489,
+      "setup_ms": 9.8756,
+      "first_apply_ms": 10.5986,
+      "repeat_apply_ms": 0.0007,
+      "repeat_updates_20": 0,
+      "changed_apply_ms": 2.0095,
+      "changed_updates_20": 20,
+      "restore_ms": 2.4145
+    },
+    "crease_edge": {
+      "selected": 200344,
+      "setup_ms": 16.7479,
+      "first_apply_ms": 22.1101,
+      "repeat_apply_ms": 0.0006,
+      "repeat_updates_20": 0,
+      "changed_apply_ms": 3.82955,
+      "changed_updates_20": 20,
+      "restore_ms": 4.5144
+    },
+    "bevel_weight_point": {
+      "selected": 100489,
+      "setup_ms": 6.354,
+      "first_apply_ms": 8.3951,
+      "repeat_apply_ms": 0.0006,
+      "repeat_updates_20": 0,
+      "changed_apply_ms": 1.95115,
+      "changed_updates_20": 20,
+      "restore_ms": 1.9413
+    },
+    "bevel_weight_edge": {
+      "selected": 200344,
+      "setup_ms": 14.5472,
+      "first_apply_ms": 20.5267,
+      "repeat_apply_ms": 0.0007,
+      "repeat_updates_20": 0,
+      "changed_apply_ms": 3.8152,
+      "changed_updates_20": 20,
+      "restore_ms": 4.5895
+    }
+  },
+  "hud": {
+    "idle": {
+      "median_submit_ms": 0.0916,
+      "frames": 80,
+      "batches": 0,
+      "measurements": 0
+    },
+    "value_changes": {
+      "median_submit_ms": 0.1969,
+      "frames": 80,
+      "batches": 80,
+      "measurements": 0
+    },
+    "cursor_moves": {
+      "median_submit_ms": 0.09365,
+      "frames": 80,
+      "batches": 0,
+      "measurements": 0
+    }
+  },
+  "success": true
+}
