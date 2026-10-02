@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/media/icon.png" alt="Quick Crease Weight icon" width="88" height="88">
+<img src="docs/media/icon.png" alt="Quick Crease Weight — orange sharp corner and blue rounded corner" width="88" height="88">
 
 # Quick Crease Weight
 

@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/media/icon.png" alt="Quick Crease Weight 插件图标" width="88" height="88">
+<img src="docs/media/icon.png" alt="Quick Crease Weight — 橙色锐角与蓝色圆角图标" width="88" height="88">
 
 # Quick Crease Weight
 

@@ -2,6 +2,7 @@
 
 ## Documentation & media — 2026-10-02
 
+- Redesigned the icon with a simple orange sharp corner and blue rounded corner; refreshed both icon sizes and the media ZIP.
 - Added a real Blender GIF demonstration and MP4 export to both READMEs.
 - Added orange/blue icon variants and a 1920 × 1080 cover, with source artwork and media preparation notes.
 - Added a reproducible Blender capture script; the add-on remains at version 1.2.0.

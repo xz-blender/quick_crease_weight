@@ -1,11 +1,18 @@
 # Image generation prompts
 
-Created with the built-in `image_gen` tool. Orange crease / blue bevel matches the add-on defaults. The cover used the original icon as a visual brand reference.
+Created with the built-in `image_gen` tool. Orange crease / blue bevel matches the add-on defaults. The current icon uses complementary sharp and rounded corners. The cover was generated separately using the earlier cube motif as its reference.
 
 ## Icon
 
 ```text
-Use case: logo-brand. Asset type: square application icon for the open-source Blender add-on Quick Crease Weight. Create one exceptionally clean, original icon at 1024 x 1024 pixels. A bold isometric mesh-corner/cube outline forms a single compact geometric symbol, with the left/top sharp crease edges in vivid warm orange #FF7D2D and the right/bottom softened beveled edges in bright sky blue #38BDF8. A few carefully placed vertex nodes communicate mesh editing. Front-facing centered composition, strong silhouette readable at 32 pixels. Flat precision vector-like craftsmanship, consistent substantial stroke widths, optically balanced spacing, no fine wireframe clutter. Place the symbol on a deep charcoal-navy rounded-square tile with generous safe padding; genuine transparent pixels outside the rounded tile. Very restrained depth only, crisp smooth antialiasing. No text, no letters, no Blender logo, no other brand logos, no watermark, no surrounding objects, no mockup, no border outside the tile. Orange crease / blue bevel must remain unmistakable. Output a single finished icon, not an icon sheet.
+Use case: logo-brand.
+Asset type: final small application icon for Quick Crease Weight, a Blender mesh editing add-on.
+Primary request: Completely redesign the icon as a beautiful, extremely simple flat geometric brand mark, suitable for a professional design tool. One single icon, centered on a square canvas.
+Symbol design: two complementary thick corner shapes form one compact, balanced geometric emblem. The upper-left orange corner is distinctly sharp, angular, a precise 90-degree folded edge. The lower-right sky-blue corner has a generous smoothly rounded bend, communicating a bevel. Together the two continuous broad ribbons suggest an open squared loop / stylized mesh corner, with clean deliberate negative-space gaps and a dark open center. Make it feel like a purposeful custom logomark, not separate clipart. Precise optical alignment, even weight, beautifully proportioned curves and corners. The silhouette must read immediately at 32 pixels. No additional lines or nodes.
+Composition: mark occupies roughly 62 percent of the canvas, centered with generous equal padding. Place it on a perfectly flat deep charcoal #151B24 rounded-square tile with radius about 21 percent of the tile width; tile occupies 92 percent of the canvas. Real transparent alpha outside the rounded tile.
+Palette: vivid warm orange #FF872D for the sharp crease form, clear sky blue #37B8F4 for the rounded bevel form, charcoal background. Use flat solid colors, crisp antialiased edges. Elegant restrained contemporary software identity.
+Avoid: isometric cubes, wireframe cubes, vertex dots, spheres, 3D extrusion, glossy materials, bevel embossing, gradients, glow, cast shadows, textures, hairline strokes, letters, text, badges, Blender logos, watermarks, multiple icon variations, presentation boards. Do not imitate any existing brand.
+Output: one finished square icon, high resolution, genuine transparency around the dark rounded-square tile.
 ```
 
 ## Cover
