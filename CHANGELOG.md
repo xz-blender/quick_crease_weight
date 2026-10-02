@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.2 — 2026-10-02
+
+- Set orange as the crease theme and blue as the bevel-weight theme.
+- Added separate theme color preferences for each tool, applied to its value, selection badge, indicator, and progress bar.
+
 ## 1.1.1 — 2026-10-02
 
 - Moved mouse and keyboard hints into a separate vertical floating list to the right of the value HUD.

@@ -141,7 +141,6 @@ def adjust_bevel():
     send("MOUSEMOVE", "NOTHING", dx=140)
     prefs.hud_anchor = "TOP"
     prefs.hud_font_size = 44
-    prefs.hud_value_color = (1.0, 0.5, 0.15, 1.0)
 
 
 def capture_bevel():

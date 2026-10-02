@@ -7,10 +7,10 @@
 Automatically target vertices or edges in Mesh Edit Mode, then drag to adjust.
 
 [![Blender](https://img.shields.io/badge/Blender-4.2%2B-E87D0D?style=flat-square&logo=blender&logoColor=white)](#compatibility)
-[![Version](https://img.shields.io/badge/version-1.1.1-38BDF8?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.2-38BDF8?style=flat-square)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-GPL--2.0--or--later-7C83FD?style=flat-square)](LICENSE)
 
-**[Download the add-on ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.1.1.zip)** · [Quick start](#quick-start) · [Customization](#customization) · [简体中文](README.zh-CN.md)
+**[Download the add-on ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.1.2.zip)** · [Quick start](#quick-start) · [Customization](#customization) · [简体中文](README.zh-CN.md)
 
 <img src="docs/images/crease-hud.png" alt="Vertex Edit Mode with crease value 0.65" width="100%">
 
@@ -22,6 +22,7 @@ Automatically target vertices or edges in Mesh Edit Mode, then drag to adjust.
 
 - **Selection-aware:** vertex mode targets vertex attributes; edge and face modes target edges.
 - **Two tools:** Shift + E for creases, Ctrl + Shift + E for bevel weights.
+- **Distinct themes:** orange for creases, blue for bevel weights, with separate color settings.
 - **Live HUD:** a rounded value card with a selection badge and pill-shaped progress bar; a separate floating shortcut list stays visible on its right throughout adjustment.
 - **Customizable:** native Blender shortcut editing, mouse sensitivity, and HUD styling.
 - **Reversible:** cancel restores individual values; confirmed operations support Blender undo.
@@ -59,12 +60,12 @@ Open **Preferences → Add-ons → Quick Crease Weight**.
 | Shortcuts | Key, modifiers, enabled state |
 | Interaction | Mouse sensitivity |
 | HUD layout | Bottom, top, or cursor; horizontal and vertical offsets |
-| HUD appearance | Font size, text/value colors, background opacity, corner radius, card shadow, text shadow |
+| HUD appearance | Font size, text color, separate crease/bevel theme colors, background opacity, corner radius, card shadow, text shadow |
 | Visibility | HUD, right-hand shortcut list, progress bar |
 
 Mouse and keyboard hints live entirely in the right-hand list. Both panels share the selected styling and move together; the layout scales down to fit narrow viewports. Disable **显示右侧按键列表** in preferences to hide the list.
 
-<img src="docs/images/bevel-hud.png" alt="Orange bevel-weight HUD showing 0.70 with a separate shortcut list on its right" width="100%">
+<img src="docs/images/bevel-hud.png" alt="Blue bevel-weight HUD showing 0.70 with a separate shortcut list on its right" width="100%">
 
 <details>
 <summary><strong>View the preferences interface</strong></summary>
@@ -113,7 +114,7 @@ $blender = 'C:\path\to\blender.exe'
 & $blender --factory-startup --command extension validate
 New-Item -ItemType Directory -Path dist -Force | Out-Null
 & $blender --factory-startup --command extension build --output-dir dist
-& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.1.1.zip
+& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.1.2.zip
 ```
 
 For real window checks:

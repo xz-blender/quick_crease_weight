@@ -32,7 +32,9 @@ class QCW_Preferences(bpy.types.AddonPreferences):
     hud_panel_shadow: BoolProperty(name="卡片阴影", default=True)
     hud_text_color: FloatVectorProperty(name="文字颜色", subtype="COLOR", size=4,
                                        default=(0.84, 0.88, 0.95, 1.0), min=0.0, max=1.0)
-    hud_value_color: FloatVectorProperty(name="数值与进度条颜色", subtype="COLOR", size=4,
+    hud_crease_color: FloatVectorProperty(name="折痕主题色", subtype="COLOR", size=4,
+                                         default=(1.0, 0.5, 0.15, 1.0), min=0.0, max=1.0)
+    hud_bevel_color: FloatVectorProperty(name="倒角权重主题色", subtype="COLOR", size=4,
                                         default=(0.25, 0.75, 1.0, 1.0), min=0.0, max=1.0)
     hud_background: BoolProperty(name="显示背景", default=True)
     hud_background_color: FloatVectorProperty(name="背景颜色与透明度", subtype="COLOR", size=4,
@@ -55,7 +57,7 @@ class QCW_Preferences(bpy.types.AddonPreferences):
         column.enabled = self.show_hud
         column.use_property_split = True
         for name in ("hud_anchor", "hud_offset_x", "hud_offset_y", "hud_font_size", "hud_corner_radius",
-                     "hud_text_color", "hud_value_color", "hud_background"):
+                     "hud_text_color", "hud_crease_color", "hud_bevel_color", "hud_background"):
             column.prop(self, name)
         row = column.row()
         row.enabled = self.hud_background

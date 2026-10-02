@@ -192,7 +192,8 @@ def draw(operator):
     help_y = y + (height - group["help"]["height"]) / 2 if group["help"] else y
     y += (height - layout["height"]) / 2
     width, height = layout["width"], layout["height"]
-    color, accent = tuple(prefs.hud_text_color), tuple(prefs.hud_value_color)
+    color = tuple(prefs.hud_text_color)
+    accent = tuple(prefs.hud_crease_color if operator.attribute_kind == "crease" else prefs.hud_bevel_color)
     blend = gpu.state.blend_get()
     try:
         gpu.state.blend_set("ALPHA")
