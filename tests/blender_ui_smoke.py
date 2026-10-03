@@ -79,6 +79,7 @@ def values(attribute, edge=False):
 
 
 def setup():
+    bpy.context.preferences.view.language = "en_US"
     for obj in bpy.context.scene.objects:
         if obj.type in {"CAMERA", "LIGHT"}:
             obj.hide_set(True)

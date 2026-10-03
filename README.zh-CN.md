@@ -9,11 +9,11 @@
 在 Blender 网格编辑模式中，根据点 / 边选择模式自动选择属性，拖动鼠标即可调整。
 
 [![Blender](https://img.shields.io/badge/Blender-4.2%2B-E87D0D?style=flat-square&logo=blender&logoColor=white)](#兼容性)
-[![Version](https://img.shields.io/badge/version-1.2.1-38BDF8?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.2.2-38BDF8?style=flat-square)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-7C83FD?style=flat-square)](LICENSE)
 [![Dependencies](https://img.shields.io/badge/dependencies-none-34D399?style=flat-square)](#功能一览)
 
-**[下载插件 ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.1.zip)** · [快速开始](#快速开始) · [自定义设置](#自定义设置) · [English](README.md)
+**[下载插件 ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.2.zip)** · [快速开始](#快速开始) · [自定义设置](#自定义设置) · [English](README.md)
 
 <img src="docs/media/cover.jpg" alt="Quick Crease Weight 封面：橙色折痕、蓝色倒角权重" width="100%">
 
@@ -40,7 +40,7 @@
 
 <img src="docs/media/demo.gif" alt="Blender 实录：Shift E 调整顶点折痕，Ctrl Shift E 调整边倒角权重，Ctrl 和 Alt 快速设为 1 与 0" width="100%">
 
-使用 **Blender 4.5.4** 和真实插件录制。细分曲面与倒角修改器用于展示权重效果。[观看或下载 MP4](docs/media/demo.mp4)。
+使用 **Blender 4.5.4** 和真实插件英文界面录制。细分曲面与倒角修改器用于展示权重效果。[观看或下载 MP4](docs/media/demo.mp4)。
 
 ## 快速开始
 
@@ -148,7 +148,7 @@
 | 4.5.4 LTS | 14 项通过 | 12 项翻译场景通过；快捷键、改键、取消、撤销、HUD、偏好设置通过 |
 | 5.2.0 LTS Beta 本机构建 | 14 项通过 | 12 项翻译场景通过，包括操作中切换语言及窄视口布局 |
 | 5.3.0 Alpha 本机构建 | 翻译更新前 13 项通过 | — |
-| 4.2 | 尚未实测 | 尚未实测 |
+| 4.2.0 | 14 项通过 | 尚未实测 |
 
 <details>
 <summary><strong>开发、验证与打包</strong></summary>
@@ -165,7 +165,7 @@ $blender = 'C:\path\to\blender.exe'
 & $blender --factory-startup --command extension validate
 New-Item -ItemType Directory -Path dist -Force | Out-Null
 & $blender --factory-startup --command extension build --output-dir dist
-& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.2.1.zip
+& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.2.2.zip
 ```
 
 界面测试：
@@ -191,7 +191,7 @@ New-Item -ItemType Directory -Path dist -Force | Out-Null
 
 默认 **Shift + E** 会在网格编辑模式中优先调用本扩展，与 Blender 内置折痕快捷键重叠。可在扩展偏好设置中改键或禁用该绑定；停用扩展会移除其快捷键。界面支持跟随 Blender 自动切换英文和简体中文。扩展离线运行，不收集遥测，不需要账号、其他扩展或第三方依赖。
 
-图标、封面和演示文件已整理为 [媒体素材包](docs/media/README.md)，包含后续向 Blender 官方扩展平台提交时可使用的导出文件。
+图标、封面和演示文件已整理为 [媒体素材包](docs/media/README.md)，包含 Blender 官方扩展平台使用的英文演示素材。
 
 作者：**WXZ**。
 

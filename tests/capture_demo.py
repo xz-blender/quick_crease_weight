@@ -15,7 +15,7 @@ import bmesh
 import bpy
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "tests" / "artifacts" / "demo"
+OUTPUT = Path(os.environ.get("QCW_DEMO_OUTPUT", str(ROOT / "tests" / "artifacts" / "demo")))
 OUTPUT.mkdir(parents=True, exist_ok=True)
 sys.path.insert(0, str(ROOT.parent))
 addon_utils.enable(ROOT.name, default_set=True)
@@ -39,6 +39,11 @@ def send(kind, value="PRESS", dx=0, **modifiers):
 
 
 def capture(duration=0.10):
+    assert bpy.context.preferences.view.language == "en_US"
+    if operators.ACTIVE:
+        renderer = operators.ACTIVE[0]._hud
+        assert renderer is not None
+        assert all(text.replace("·", "").isascii() for text, *_ in renderer.texts), renderer.texts
     path = OUTPUT / f"frame-{len(frames):04d}.png"
     with bpy.context.temp_override(window=window, area=area, region=region):
         bpy.ops.screen.screenshot_area(filepath=str(path))
@@ -60,6 +65,11 @@ def title_draw():
 
 def setup():
     global area, region, handle
+    view = bpy.context.preferences.view
+    view.language = "en_US"
+    view.use_translate_interface = True
+    view.use_translate_tooltips = True
+    view.use_translate_reports = True
     with bpy.context.temp_override(window=window, area=area, region=region):
         bpy.ops.screen.screen_full_area(use_hide_panels=True)
     area = next(item for item in window.screen.areas if item.type == "VIEW_3D")
@@ -100,7 +110,7 @@ def setup():
     space.region_3d.view_distance = 7.8
     space.region_3d.view_location = (0, 0, -0.6)
     prefs.hud_offset_y = 25
-    prefs.hud_font_size = 38
+    prefs.hud_font_size = 52
     handle = bpy.types.SpaceView3D.draw_handler_add(title_draw, (), "WINDOW", "POST_PIXEL")
     send("MOUSEMOVE", "NOTHING")
 
@@ -158,6 +168,7 @@ def finish():
     assert not operators.ACTIVE
     bpy.types.SpaceView3D.draw_handler_remove(handle, "WINDOW")
     (OUTPUT / "frames.json").write_text(json.dumps({"blender": bpy.app.version_string,
+                                                  "language": bpy.context.preferences.view.language,
                                                   "frames": frames}, indent=2), encoding="utf-8")
     lines = []
     for frame in frames:

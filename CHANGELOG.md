@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.2 — 2026-10-04
+
+- Released the English-first interface and Simplified Chinese translations on Blender Extensions. HUD, preference labels, tooltips, reports, and status hints follow Blender's translation settings.
+- Re-recorded the real Blender demonstration and screenshots in English, with 16:9 demo exports for the extension listing.
+- Added explicit English-language capture settings and checks for untranslated HUD text in the capture workflow.
+- Mesh editing behavior and default shortcuts are unchanged.
+
 ## 1.2.1 — 2026-10-02
 
 - Prepared the Blender Extensions submission under GPL-3.0-or-later, using the existing GPL-2.0-or-later grant; included the GPL version 3 license text and author copyright metadata.

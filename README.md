@@ -9,10 +9,10 @@
 Automatically target vertices or edges in Mesh Edit Mode, then drag to adjust.
 
 [![Blender](https://img.shields.io/badge/Blender-4.2%2B-E87D0D?style=flat-square&logo=blender&logoColor=white)](#compatibility)
-[![Version](https://img.shields.io/badge/version-1.2.1-38BDF8?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.2.2-38BDF8?style=flat-square)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-7C83FD?style=flat-square)](LICENSE)
 
-**[Download the add-on ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.1.zip)** · [Quick start](#quick-start) · [Customization](#customization) · [简体中文](README.zh-CN.md)
+**[Download the add-on ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.2.zip)** · [Quick start](#quick-start) · [Customization](#customization) · [简体中文](README.zh-CN.md)
 
 <img src="docs/media/cover.jpg" alt="Quick Crease Weight — orange creases and blue bevel weights" width="100%">
 
@@ -37,7 +37,7 @@ Automatically target vertices or edges in Mesh Edit Mode, then drag to adjust.
 
 <img src="docs/media/demo.gif" alt="Blender demo: adjust vertex crease with Shift E, edge bevel weight with Ctrl Shift E, then use Ctrl and Alt to set 1 and 0" width="100%">
 
-Recorded in **Blender 4.5.4** with the actual add-on. Subdivision Surface and Bevel modifiers visualize the weights; this recording shows the Chinese HUD. [Watch or download the MP4](docs/media/demo.mp4).
+Recorded in **Blender 4.5.4** with the actual add-on. Subdivision Surface and Bevel modifiers visualize the weights; this recording shows the English HUD. [Watch or download the MP4](docs/media/demo.mp4).
 
 ## Quick start
 
@@ -127,7 +127,7 @@ Declared minimum: **Blender 4.2**. Local verification results:
 | 4.5.4 LTS | 14 passed | 12 translation scenarios passed; shortcuts, remapping, cancel, undo, HUD and preferences passed |
 | 5.2.0 LTS Beta, local build | 14 passed | 12 translation scenarios passed, including live switching and narrow HUD layout |
 | 5.3.0 Alpha, local build | 13 passed before the translation update | — |
-| 4.2 | Not locally tested | Not locally tested |
+| 4.2.0 | 14 passed | Not locally tested |
 
 These results do not imply testing on every operating system or Blender build.
 
@@ -142,7 +142,7 @@ $blender = 'C:\path\to\blender.exe'
 & $blender --factory-startup --command extension validate
 New-Item -ItemType Directory -Path dist -Force | Out-Null
 & $blender --factory-startup --command extension build --output-dir dist
-& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.2.1.zip
+& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.2.2.zip
 ```
 
 For real window checks:
@@ -158,7 +158,7 @@ The UI scripts use factory-startup test windows, do not save user preferences, a
 
 ## Credits and license
 
-Icons, cover art, and the recorded demo are available in the [media kit](docs/media/README.md), including ready-to-use exports for a future Blender Extensions submission.
+Icons, cover art, and the recorded demo are available in the [media kit](docs/media/README.md), including English demonstration exports for the Blender Extensions listing.
 
 **Author:** WXZ.
 
