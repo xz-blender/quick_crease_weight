@@ -38,9 +38,9 @@
 
 ## 操作演示
 
-<img src="docs/media/demo.gif" alt="Blender 实录：Shift E 调整顶点折痕，Ctrl Shift E 调整边倒角权重，Ctrl 和 Alt 快速设为 1 与 0" width="100%">
+<img src="docs/media/demo.gif" alt="Blender 英文界面实录：Shift E 调整顶点折痕，Ctrl Shift E 调整边倒角权重，Ctrl 和 Alt 快速设为 1 与 0" width="100%">
 
-使用 **Blender 4.5.4** 和真实插件英文界面录制。细分曲面与倒角修改器用于展示权重效果。[观看或下载 MP4](docs/media/demo.mp4)。
+使用 **Blender 4.5.4** 和真实插件英文界面录制。细分曲面与倒角修改器用于展示权重效果。中英文 README 默认统一使用英文演示和界面说明图；插件本身仍随 Blender 的语言设置切换。[观看或下载 MP4](docs/media/demo.mp4)。
 
 ## 快速开始
 
@@ -85,14 +85,14 @@
 鼠标和键盘操作提示全部放在 HUD 右侧的独立悬浮列表中，不占用数值卡片。两块面板共用外观设置、一起定位，并在窄视口中自动缩放。可在偏好设置中关闭 **显示右侧按键列表**。
 
 <p align="center">
-  <img src="docs/images/bevel-hud.png" alt="蓝色大字号 HUD 位于视口顶部，显示边倒角权重 0.70" width="100%">
+  <img src="docs/images/bevel-hud.png" alt="英文蓝色大字号 HUD 位于视口顶部，显示边倒角权重 0.70" width="100%">
   <br><sub>顶部定位与大字号示例：倒角权重使用默认蓝色主题。</sub>
 </p>
 
 <details>
 <summary><strong>查看偏好设置界面</strong></summary>
 
-<img src="docs/images/preferences.png" alt="键位编辑器、鼠标灵敏度和 HUD 样式设置" width="100%">
+<img src="docs/images/preferences.png" alt="英文偏好设置：键位编辑器、鼠标灵敏度和 HUD 样式设置" width="100%">
 
 截图来自独立测试窗口中的实际偏好设置布局；折痕快捷键已演示性地改为 **Shift + Q**，安装后的默认值仍为 **Shift + E**。
 

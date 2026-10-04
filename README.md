@@ -35,9 +35,9 @@ Automatically target vertices or edges in Mesh Edit Mode, then drag to adjust.
 
 ## See it in action
 
-<img src="docs/media/demo.gif" alt="Blender demo: adjust vertex crease with Shift E, edge bevel weight with Ctrl Shift E, then use Ctrl and Alt to set 1 and 0" width="100%">
+<img src="docs/media/demo.gif" alt="English Blender demo: adjust vertex crease with Shift E, edge bevel weight with Ctrl Shift E, then use Ctrl and Alt to set 1 and 0" width="100%">
 
-Recorded in **Blender 4.5.4** with the actual add-on. Subdivision Surface and Bevel modifiers visualize the weights; this recording shows the English HUD. [Watch or download the MP4](docs/media/demo.mp4).
+Recorded in **Blender 4.5.4** with the actual add-on. Subdivision Surface and Bevel modifiers visualize the weights. Both README translations use the English demo and interface screenshots by default; the add-on still follows Blender's language settings. [Watch or download the MP4](docs/media/demo.mp4).
 
 ## Quick start
 
@@ -79,12 +79,12 @@ Open **Preferences → Add-ons → Quick Crease Weight**.
 
 Mouse and keyboard hints live entirely in the right-hand list. Both panels share the selected styling and move together; the layout scales down to fit narrow viewports. Disable **Show Right-hand Shortcut List** in preferences to hide the list.
 
-<img src="docs/images/bevel-hud.png" alt="Blue bevel-weight HUD showing 0.70 with a separate shortcut list on its right" width="100%">
+<img src="docs/images/bevel-hud.png" alt="English blue bevel-weight HUD showing 0.70 with a separate shortcut list on its right" width="100%">
 
 <details>
 <summary><strong>View the preferences interface</strong></summary>
 
-<img src="docs/images/preferences.png" alt="Native keymap editor and HUD appearance controls" width="100%">
+<img src="docs/images/preferences.png" alt="English preferences with the native keymap editor and HUD appearance controls" width="100%">
 
 Actual preferences layout in an isolated test window. The crease shortcut has been changed to **Shift + Q** to demonstrate customization; the default remains **Shift + E**.
 
