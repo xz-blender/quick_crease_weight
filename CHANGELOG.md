@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.3 — 2026-10-18
+
+- Added release.bat with an explicit runtime file allowlist and version consistency checks.
+- Release ZIPs contain only the seven add-on Python modules, Blender manifest, and GPL license; documentation, media, tests, caches, and build scripts are excluded.
+- Mesh editing behavior is unchanged.
+
 ## 1.2.2 — 2026-10-04
 
 - Released the English-first interface and Simplified Chinese translations on Blender Extensions. HUD, preference labels, tooltips, reports, and status hints follow Blender's translation settings.

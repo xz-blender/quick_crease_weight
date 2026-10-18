@@ -4,7 +4,7 @@
 bl_info = {
     "name": "Quick Crease Weight",
     "author": "WXZ",
-    "version": (1, 2, 2),
+    "version": (1, 2, 3),
     "blender": (4, 2, 0),
     "location": "3D View > Mesh Edit Mode",
     "description": "Quickly adjust vertex or edge creases and bevel weights with custom shortcuts and a HUD",

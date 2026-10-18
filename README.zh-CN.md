@@ -9,11 +9,11 @@
 在 Blender 网格编辑模式中，根据点 / 边选择模式自动选择属性，拖动鼠标即可调整。
 
 [![Blender](https://img.shields.io/badge/Blender-4.2%2B-E87D0D?style=flat-square&logo=blender&logoColor=white)](#兼容性)
-[![Version](https://img.shields.io/badge/version-1.2.2-38BDF8?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.2.3-38BDF8?style=flat-square)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-7C83FD?style=flat-square)](LICENSE)
 [![Dependencies](https://img.shields.io/badge/dependencies-none-34D399?style=flat-square)](#功能一览)
 
-**[下载插件 ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.2.zip)** · [快速开始](#快速开始) · [自定义设置](#自定义设置) · [English](README.md)
+**[下载插件 ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.3.zip)** · [快速开始](#快速开始) · [自定义设置](#自定义设置) · [English](README.md)
 
 <img src="docs/media/cover.jpg" alt="Quick Crease Weight 封面：橙色折痕、蓝色倒角权重" width="100%">
 
@@ -163,9 +163,8 @@ $blender = 'C:\path\to\blender.exe'
 
 # 校验并构建安装包。
 & $blender --factory-startup --command extension validate
-New-Item -ItemType Directory -Path dist -Force | Out-Null
-& $blender --factory-startup --command extension build --output-dir dist
-& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.2.2.zip
+.\release.bat
+& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.2.3.zip
 ```
 
 界面测试：

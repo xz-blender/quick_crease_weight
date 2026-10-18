@@ -9,10 +9,10 @@
 Automatically target vertices or edges in Mesh Edit Mode, then drag to adjust.
 
 [![Blender](https://img.shields.io/badge/Blender-4.2%2B-E87D0D?style=flat-square&logo=blender&logoColor=white)](#compatibility)
-[![Version](https://img.shields.io/badge/version-1.2.2-38BDF8?style=flat-square)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.2.3-38BDF8?style=flat-square)](CHANGELOG.md)
 [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-7C83FD?style=flat-square)](LICENSE)
 
-**[Download the add-on ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.2.zip)** · [Quick start](#quick-start) · [Customization](#customization) · [简体中文](README.zh-CN.md)
+**[Download the add-on ZIP](https://github.com/xz-blender/quick_crease_weight/raw/refs/heads/main/downloads/quick_crease_weight-1.2.3.zip)** · [Quick start](#quick-start) · [Customization](#customization) · [简体中文](README.zh-CN.md)
 
 <img src="docs/media/cover.jpg" alt="Quick Crease Weight — orange creases and blue bevel weights" width="100%">
 
@@ -140,9 +140,8 @@ Run from the project directory in PowerShell:
 $blender = 'C:\path\to\blender.exe'
 & $blender --background --factory-startup --python-exit-code 1 --python tests/blender_integration.py
 & $blender --factory-startup --command extension validate
-New-Item -ItemType Directory -Path dist -Force | Out-Null
-& $blender --factory-startup --command extension build --output-dir dist
-& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.2.2.zip
+.\release.bat
+& $blender --factory-startup --command extension validate dist/quick_crease_weight-1.2.3.zip
 ```
 
 For real window checks:
